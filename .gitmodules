@@ -1,0 +1,4 @@
+[submodule "was-properties"]
+	path = was-properties
+	url = https://github.com/Naemansan-ValueUp/was-properties.git
+	branch = main
