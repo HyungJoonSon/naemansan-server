@@ -11,12 +11,12 @@ on:
   push:
     branches: [ "dev" ]
   pull_request_target:
-    types: [labeled, closed]
+    types: [labeled]
 
 jobs:
   # safe tag에 대한 gradlew test && merged에 대한 gradlew build/deploy
   CI:
-    if: contains(github.event.pull_request.labels.*.name, 'safe') || github.event.pull_request.merged == true
+    if: contains(github.event.pull_request.labels.*.name, 'safe')
     runs-on: ubuntu-20.04
 
     steps:
