@@ -13,9 +13,6 @@ on:
   pull_request_target:
     types: [labeled]
 
-permissions:
-  contents: read
-
 jobs:
   CI:
     if: contains(github.event.pull_request.labels.*.name, 'safe')
