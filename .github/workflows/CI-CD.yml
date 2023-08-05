@@ -65,6 +65,7 @@ jobs:
         tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPONAME }}
         
   CD:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-20.04
     needs: CI
 
