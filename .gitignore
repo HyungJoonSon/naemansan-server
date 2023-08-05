@@ -22,11 +22,12 @@ bin/
 *.iws
 *.iml
 *.ipr
-application-local.yml
-application-server.yml
-*.json
-*.p8
-*.p12
+/src/main/resources/application-local.yml
+/src/main/resources/application-dev.yml
+/src/main/resources/application-prod.yml
+/src/main/resources/*.json
+/src/main/resources/*.p8
+/src/main/resources/*.p12
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
