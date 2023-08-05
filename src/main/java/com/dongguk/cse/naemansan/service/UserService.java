@@ -89,7 +89,6 @@ public class UserService {
         for (EnrollmentCourse enrollmentCourse : enrollmentCourseList) {
             enrollmentCourse.setUser(Admin);
         }
-
         for (Comment comment : comments) {
             comment.setUser(Admin);
         }
