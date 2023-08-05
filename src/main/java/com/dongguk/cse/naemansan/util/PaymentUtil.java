@@ -21,12 +21,12 @@ import java.io.IOException;
 @Slf4j
 @Component
 public class PaymentUtil {
-//    private final IamportClient iamportClient = new IamportClient("1656610451202616",
-//            "Go0Kmco42ux0HdqGua61tWdapOpnYMdvPxd0nJJQngm6DHsICmfIkUC2b615M8z0JTXFtOKaK7DNahLj");
+    private final IamportClient iamportClient = new IamportClient("1656610451202616",
+            "Go0Kmco42ux0HdqGua61tWdapOpnYMdvPxd0nJJQngm6DHsICmfIkUC2b615M8z0JTXFtOKaK7DNahLj");
 
-//    public IamportResponse<Payment> paymentLookup(String impUid) throws IamportResponseException, IOException {
-//        return iamportClient.paymentByImpUid(impUid);
-//    }
+    public IamportResponse<Payment> paymentLookup(String impUid) throws IamportResponseException, IOException {
+        return iamportClient.paymentByImpUid(impUid);
+    }
 
     public Boolean verifyIamport(IamportResponse<Payment> irsp, Long amount) {
         if (irsp.getResponse().getAmount().intValue() != amount) {
