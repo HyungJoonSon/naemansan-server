@@ -69,16 +69,16 @@ jobs:
     needs: CI
 
     steps:
-      - name: Docker image pull and run
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-          host: ${{ secrets.DEV_SSH_HOST }}
-          username: ${{ secrets.DEV_SSH_USERNAME }}
-          password: ${{ secrets.DEV_SSH_PASSWORD }}
-          key: ${{ secrets.DEV_SSH_KEY }}
-          port: ${{ secrets.DEV_SSH_PORT }}
-          script: |
-            docker stop naemansan-was
-            docker rm naemansan-was
-            docker image rm ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPONAME }}
-            docker run -d -v /root/resources:/app/resources --net naemansan-bridge --ip 172.20.0.3 -p 8080:8080 --name naemansan-was ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPONAME }}
+    - name: Docker image pull and run
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.DEV_SSH_HOST }}
+        username: ${{ secrets.DEV_SSH_USERNAME }}
+        password: ${{ secrets.DEV_SSH_PASSWORD }}
+        key: ${{ secrets.DEV_SSH_KEY }}
+        port: ${{ secrets.DEV_SSH_PORT }}
+        script: |
+          docker stop naemansan-was
+          docker rm naemansan-was
+          docker image rm ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPONAME }}
+          docker run -d -v /root/resources:/app/resources --net naemansan-bridge --ip 172.20.0.3 -p 8080:8080 --name naemansan-was ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPONAME }}
