@@ -48,8 +48,8 @@ public class CourseUtil {
     public String getLocationName(PointDto point) {
         StringBuilder sb = new StringBuilder();
         sb.append(GOOGLE_MAP_URL);
-        sb.append("?latlng=" + point.toString());
-        sb.append("&key=" + GOOGLE_MAP_API_KEY);
+        sb.append("?latlng=").append(point.toString());
+        sb.append("&key=").append(GOOGLE_MAP_API_KEY);
         sb.append("&language=" + "ko");
 
         ResponseEntity<String> response = restTemplate.exchange(
