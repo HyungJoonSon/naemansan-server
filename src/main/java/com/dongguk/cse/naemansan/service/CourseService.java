@@ -319,20 +319,18 @@ public class CourseService {
     }
 
     // 나만의 Tap, Main Tap - 태그를 가진 산책로 조회용
-    public List<EnrollmentCourseListDto> getEnrollmentCourseListByTag(Long userId, Long pageNum, Long Num, String tag) {
+    public List<EnrollmentCourseListDto> getEnrollmentCourseListByTag(Long userId, Long pageNum, Long Num, String tagName) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND_USER));
         // Tag 존재유무 확인
-        ECourseTag courseTag = ECourseTag.existType(tag);
+        ECourseTag courseTag = ECourseTag.existType(tagName);
         if (courseTag == null) {
             throw new RestApiException(ErrorCode.NOT_FOUND_COURSE_TAG);
         }
 
         Pageable paging = PageRequest.of(pageNum.intValue(), Num.intValue(), Sort.by(Sort.Direction.DESC, "createdDate"));
-        Page<EnrollmentCourse> page =  enrollmentCourseRepository.findListByTag(courseTag, paging);
+        Page<EnrollmentCourse> page =  enrollmentCourseRepository.findListByTag(tagName, paging);
 
-        List<EnrollmentCourseListDto> list = courseUtil.getEnrollmentCourseList(user, page);
-
-        return list;
+        return courseUtil.getEnrollmentCourseList(user, page);
     }
 
     // 산책로 Tap - 해당 유저의 성향에 따라 추천 산책로 조회용

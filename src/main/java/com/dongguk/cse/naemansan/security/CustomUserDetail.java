@@ -1,6 +1,7 @@
 package com.dongguk.cse.naemansan.security;
 
 import com.dongguk.cse.naemansan.domain.User;
+import com.dongguk.cse.naemansan.repository.UserRepository;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -22,20 +23,14 @@ public class CustomUserDetail implements UserDetails {
         this.authorities = authorities;
     }
 
-    public static CustomUserDetail create(User user) {
+    public static CustomUserDetail create(UserRepository.UserLoginForm user) {
         List<GrantedAuthority> authorities = Collections.
-                singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole()));
+                singletonList(new SimpleGrantedAuthority("ROLE_" + user.getUserRoleType()));
 
         return new CustomUserDetail(
                 user.getId(),
                 authorities
         );
-    }
-
-    public static CustomUserDetail create(User user, Map<String, Object> attributes) {
-        CustomUserDetail userDetails = CustomUserDetail.create(user);
-        userDetails.setAttributes(attributes);
-        return userDetails;
     }
 
     // UserDetail Override

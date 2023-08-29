@@ -113,7 +113,9 @@ public class UserService {
 
     public List<TagDto> updateTagByUserChoice(Long userId, UserTagRequestDto requestDto) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND_USER));
-        userTagRepository.deleteAll(user.getUserTags());
+        userTagRepository.deleteAllInBatch(user.getUserTags());
+        userTagRepository.flush();
+
         List<Tag> tags = tagRepository.findTagsByIds(requestDto.getTags().stream()
                 .filter(tagDto -> tagDto.getStatus() != ETagStatus.DELETE)
                 .map(tagDto -> tagDto.getName().getId())

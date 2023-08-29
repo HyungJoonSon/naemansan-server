@@ -60,28 +60,26 @@ public class ImageService {
             case SHOP -> { findImage = imageRepository.findByShop((Shop) useObject).orElseThrow(() -> new RestApiException(ErrorCode.NOT_EXIST_ENTITY_REQUEST)); }
         }
 
-//        if (!findImage.getUuidName().equals("0_default_image.png")) {
-//            File currentFile = new File(findImage.getPath());
-//            boolean result = currentFile.delete();
-//        }
-//
-//        findImage.updateImage(file.getOriginalFilename(), uuidImageName, filePath, file.getContentType());
+        if (!findImage.getUuidName().equals("0_default_image.png")) {
+            File currentFile = new File(FOLDER_PATH + findImage.getUuidName());
+            boolean result = currentFile.delete();
+        }
+
+        findImage.updateImage(file.getOriginalFilename(), uuidImageName, file.getContentType());
 
         return uuidImageName;
     }
 
     public byte[] downloadImage(String UuidName) throws IOException {
         String filePath = null;
-        Image image = null;
 
         if (UuidName.equals("0_default_image.png")) {
             filePath = FOLDER_PATH + "0_default_image.png";
         } else {
-            image = imageRepository.findByUuidName(UuidName).orElseThrow(() -> new RestApiException(ErrorCode.FILE_DOWNLOAD));
-//            filePath = image.getPath();
+            imageRepository.findByUuidName(UuidName).orElseThrow(() -> new RestApiException(ErrorCode.FILE_DOWNLOAD));
+            filePath = FOLDER_PATH + UuidName;
         }
 
-        byte[] images = Files.readAllBytes(new File(filePath).toPath());
-        return images;
+        return Files.readAllBytes(new File(filePath).toPath());
     }
 }
