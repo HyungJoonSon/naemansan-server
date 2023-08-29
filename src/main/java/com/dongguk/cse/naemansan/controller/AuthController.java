@@ -1,6 +1,6 @@
 package com.dongguk.cse.naemansan.controller;
 
-import com.dongguk.cse.naemansan.common.ResponseDto;
+import com.dongguk.cse.naemansan.exception.ResponseDto;
 import com.dongguk.cse.naemansan.dto.response.JwtResponseDto;
 import com.dongguk.cse.naemansan.domain.type.ELoginProvider;
 import com.dongguk.cse.naemansan.dto.response.TokenDto;

@@ -1,8 +1,7 @@
 package com.dongguk.cse.naemansan.security;
 
-import com.dongguk.cse.naemansan.common.ErrorCode;
-import com.dongguk.cse.naemansan.common.ExceptionDto;
-import jakarta.servlet.ServletException;
+import com.dongguk.cse.naemansan.exception.ErrorCode;
+import com.dongguk.cse.naemansan.exception.ExceptionDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import net.minidev.json.JSONValue;

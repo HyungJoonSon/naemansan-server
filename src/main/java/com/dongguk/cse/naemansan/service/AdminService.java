@@ -1,13 +1,11 @@
 package com.dongguk.cse.naemansan.service;
 
-import com.dongguk.cse.naemansan.common.ErrorCode;
-import com.dongguk.cse.naemansan.common.RestApiException;
+import com.dongguk.cse.naemansan.exception.ErrorCode;
+import com.dongguk.cse.naemansan.exception.RestApiException;
 import com.dongguk.cse.naemansan.domain.Image;
 import com.dongguk.cse.naemansan.domain.Shop;
 import com.dongguk.cse.naemansan.domain.type.ImageUseType;
-import com.dongguk.cse.naemansan.dto.request.AdvertisementRequestDto;
 import com.dongguk.cse.naemansan.dto.request.ShopRequestDto;
-import com.dongguk.cse.naemansan.dto.response.AdvertisementDto;
 import com.dongguk.cse.naemansan.dto.response.ShopDto;
 import com.dongguk.cse.naemansan.repository.ImageRepository;
 import com.dongguk.cse.naemansan.repository.ShopRepository;

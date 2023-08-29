@@ -1,8 +1,7 @@
 package com.dongguk.cse.naemansan.controller;
 
 import com.dongguk.cse.naemansan.dto.NotificationDto;
-import com.dongguk.cse.naemansan.common.ResponseDto;
-import com.dongguk.cse.naemansan.dto.request.FCMNotificationRequestDto;
+import com.dongguk.cse.naemansan.exception.ResponseDto;
 import com.dongguk.cse.naemansan.dto.request.NotificationRequestDto;
 import com.dongguk.cse.naemansan.service.NotificationService;
 import com.dongguk.cse.naemansan.util.NotificationUtil;

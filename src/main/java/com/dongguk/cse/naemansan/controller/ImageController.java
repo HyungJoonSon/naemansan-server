@@ -1,8 +1,8 @@
 package com.dongguk.cse.naemansan.controller;
 
-import com.dongguk.cse.naemansan.common.ExceptionDto;
+import com.dongguk.cse.naemansan.exception.ExceptionDto;
 import com.dongguk.cse.naemansan.domain.type.ImageUseType;
-import com.dongguk.cse.naemansan.common.ResponseDto;
+import com.dongguk.cse.naemansan.exception.ResponseDto;
 import com.dongguk.cse.naemansan.service.ImageService;
 import com.sun.nio.sctp.IllegalUnbindException;
 import lombok.RequiredArgsConstructor;

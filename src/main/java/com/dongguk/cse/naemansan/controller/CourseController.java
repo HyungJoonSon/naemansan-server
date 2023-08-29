@@ -4,7 +4,7 @@ import com.dongguk.cse.naemansan.domain.type.ECourseTag;
 import com.dongguk.cse.naemansan.dto.request.IndividualCourseRequestDto;
 import com.dongguk.cse.naemansan.dto.response.*;
 import com.dongguk.cse.naemansan.dto.request.EnrollmentCourseRequestDto;
-import com.dongguk.cse.naemansan.common.ResponseDto;
+import com.dongguk.cse.naemansan.exception.ResponseDto;
 import com.dongguk.cse.naemansan.service.CourseService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

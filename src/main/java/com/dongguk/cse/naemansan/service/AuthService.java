@@ -1,7 +1,7 @@
 package com.dongguk.cse.naemansan.service;
 
-import com.dongguk.cse.naemansan.common.ErrorCode;
-import com.dongguk.cse.naemansan.common.RestApiException;
+import com.dongguk.cse.naemansan.exception.ErrorCode;
+import com.dongguk.cse.naemansan.exception.RestApiException;
 import com.dongguk.cse.naemansan.domain.*;
 import com.dongguk.cse.naemansan.domain.type.EUserRole;
 import com.dongguk.cse.naemansan.domain.type.ImageUseType;

@@ -1,6 +1,6 @@
 package com.dongguk.cse.naemansan.controller;
 
-import com.dongguk.cse.naemansan.common.ResponseDto;
+import com.dongguk.cse.naemansan.exception.ResponseDto;
 import com.dongguk.cse.naemansan.service.FollowService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;

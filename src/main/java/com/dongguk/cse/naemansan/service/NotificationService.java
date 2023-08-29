@@ -1,16 +1,12 @@
 package com.dongguk.cse.naemansan.service;
 
-import com.dongguk.cse.naemansan.common.ErrorCode;
-import com.dongguk.cse.naemansan.common.RestApiException;
-import com.dongguk.cse.naemansan.domain.Comment;
+import com.dongguk.cse.naemansan.exception.ErrorCode;
+import com.dongguk.cse.naemansan.exception.RestApiException;
 import com.dongguk.cse.naemansan.domain.EnrollmentCourse;
 import com.dongguk.cse.naemansan.domain.Notification;
 import com.dongguk.cse.naemansan.domain.User;
 import com.dongguk.cse.naemansan.dto.NotificationDto;
 import com.dongguk.cse.naemansan.dto.request.FCMNotificationRequestDto;
-import com.dongguk.cse.naemansan.event.CommentNotificationEvent;
-import com.dongguk.cse.naemansan.event.FollowNotificationEvent;
-import com.dongguk.cse.naemansan.event.LikeNotificationEvent;
 import com.dongguk.cse.naemansan.repository.EnrollmentCourseRepository;
 import com.dongguk.cse.naemansan.repository.NotificationRepository;
 import com.dongguk.cse.naemansan.repository.UserRepository;
@@ -18,7 +14,6 @@ import com.dongguk.cse.naemansan.util.NotificationUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

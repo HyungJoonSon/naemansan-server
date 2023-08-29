@@ -1,10 +1,10 @@
 package com.dongguk.cse.naemansan.controller;
 
+import com.dongguk.cse.naemansan.annotation.UserId;
 import com.dongguk.cse.naemansan.dto.request.UserDeviceRequestDto;
-import com.dongguk.cse.naemansan.dto.request.UserPaymentRequestDto;
 import com.dongguk.cse.naemansan.dto.request.UserTagRequestDto;
 import com.dongguk.cse.naemansan.dto.response.*;
-import com.dongguk.cse.naemansan.common.ResponseDto;
+import com.dongguk.cse.naemansan.exception.ResponseDto;
 import com.dongguk.cse.naemansan.dto.request.UserRequestDto;
 import com.dongguk.cse.naemansan.service.BadgeService;
 import com.dongguk.cse.naemansan.service.FollowService;
@@ -27,11 +27,12 @@ public class UserController {
     private final BadgeService badgeService;
     private final FollowService followService;
     @GetMapping("")
-    public ResponseDto<UserDto> readUser(Authentication authentication) {
-        return new ResponseDto<>(userService.readUserProfile(Long.valueOf(authentication.getName())));
+    public ResponseDto<UserDto> readUser(@UserId Long userId) {
+        log.info("userId: {}", userId);
+        return new ResponseDto<>(userService.readUserProfile(userId));
     }
     @GetMapping("/{otherUserId}")
-    public ResponseDto<UserDto> readUser(@PathVariable Long otherUserId) {
+    public ResponseDto<UserDto> readAnotherUser(@PathVariable Long otherUserId) {
         return new ResponseDto<UserDto>(userService.readUserProfile(otherUserId));
     }
 

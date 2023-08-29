@@ -1,7 +1,7 @@
 package com.dongguk.cse.naemansan.security.jwt;
 
-import com.dongguk.cse.naemansan.common.ErrorCode;
-import com.dongguk.cse.naemansan.common.RestApiException;
+import com.dongguk.cse.naemansan.exception.ErrorCode;
+import com.dongguk.cse.naemansan.exception.RestApiException;
 import com.dongguk.cse.naemansan.domain.type.EUserRole;
 import com.dongguk.cse.naemansan.repository.UserRepository;
 import io.jsonwebtoken.*;

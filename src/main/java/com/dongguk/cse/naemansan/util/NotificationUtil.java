@@ -1,7 +1,7 @@
 package com.dongguk.cse.naemansan.util;
 
-import com.dongguk.cse.naemansan.common.ErrorCode;
-import com.dongguk.cse.naemansan.common.RestApiException;
+import com.dongguk.cse.naemansan.exception.ErrorCode;
+import com.dongguk.cse.naemansan.exception.RestApiException;
 import com.dongguk.cse.naemansan.domain.User;
 import com.dongguk.cse.naemansan.dto.request.FCMNotificationRequestDto;
 import com.dongguk.cse.naemansan.repository.UserRepository;
