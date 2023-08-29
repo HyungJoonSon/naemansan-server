@@ -26,7 +26,7 @@ import java.util.Random;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class AuthenticationService {
+public class AuthService {
     private final UserRepository userRepository;
     private final ImageRepository imageRepository;
     private final JwtProvider jwtProvider;
@@ -96,6 +96,7 @@ public class AuthenticationService {
                     User loginUser = userRepository.save(User.builder()
                             .serialId(serialId)
                             .nickname(userName)
+                            .password("default")
                             .provider(provider)
                             .role(EUserRole.USER)
                             .build());

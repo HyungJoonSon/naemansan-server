@@ -24,55 +24,55 @@ public class CourseController {
     // Individual Course Create
     @PostMapping("/individual")
     public ResponseDto<IndividualCourseDetailDto> createIndividualCourse(Authentication authentication, @RequestBody IndividualCourseRequestDto requestDto){
-        return new ResponseDto<IndividualCourseDetailDto>(courseService.createIndividualCourse(Long.valueOf(authentication.getName()), requestDto));
+        return new ResponseDto<>(courseService.createIndividualCourse(Long.valueOf(authentication.getName()), requestDto));
     }
 
     // Individual Course Read
     @GetMapping("/individual/{courseId}")
     public ResponseDto<IndividualCourseDetailDto> readIndividualCourse(Authentication authentication, @PathVariable Long courseId){
-        return new ResponseDto<IndividualCourseDetailDto>(courseService.readIndividualCourse(Long.valueOf(authentication.getName()), courseId));
+        return new ResponseDto<>(courseService.readIndividualCourse(Long.valueOf(authentication.getName()), courseId));
     }
 
     // Individual Course Update
     @PutMapping("/individual/{courseId}")
     public ResponseDto<Boolean> updateIndividualCourse(Authentication authentication, @PathVariable Long courseId){
-        return new ResponseDto<Boolean>(courseService.updateIndividualCourse(Long.valueOf(authentication.getName()), courseId));
+        return new ResponseDto<>(courseService.updateIndividualCourse(Long.valueOf(authentication.getName()), courseId));
     }
 
     // Individual Course Delete
     @DeleteMapping("/individual/{courseId}")
     public ResponseDto<Boolean> deleteIndividualCourse(Authentication authentication, @PathVariable Long courseId){
-        return new ResponseDto<Boolean>(courseService.deleteIndividualCourse(Long.valueOf(authentication.getName()), courseId));
+        return new ResponseDto<>(courseService.deleteIndividualCourse(Long.valueOf(authentication.getName()), courseId));
     }
 
     // Course Create
     @PostMapping("/enrollment")
     public ResponseDto<EnrollmentCourseDetailDto> createCourse(Authentication authentication, @RequestBody EnrollmentCourseRequestDto enrollmentCourseRequestDto){
-        return new ResponseDto<EnrollmentCourseDetailDto>(courseService.createEnrollmentCourse(Long.valueOf(authentication.getName()), enrollmentCourseRequestDto));
+        return new ResponseDto<>(courseService.createEnrollmentCourse(Long.valueOf(authentication.getName()), enrollmentCourseRequestDto));
     }
 
     // Course Read
     @GetMapping("/enrollment/{courseId}")
     public ResponseDto<EnrollmentCourseDetailDto> readCourse(Authentication authentication, @PathVariable Long courseId) {
-        return new ResponseDto<EnrollmentCourseDetailDto>(courseService.readEnrollmentCourse(Long.valueOf(authentication.getName()), Long.valueOf(courseId)));
+        return new ResponseDto<>(courseService.readEnrollmentCourse(Long.valueOf(authentication.getName()), Long.valueOf(courseId)));
     }
 
     // Course Update
     @PutMapping("/enrollment/{courseId}")
     public ResponseDto<EnrollmentCourseDetailDto> updateCourse(Authentication authentication, @PathVariable Long courseId, @RequestBody EnrollmentCourseRequestDto enrollmentCourseRequestDto) {
-        return new ResponseDto<EnrollmentCourseDetailDto>(courseService.updateEnrollmentCourse(Long.valueOf(authentication.getName()), courseId, enrollmentCourseRequestDto));
+        return new ResponseDto<>(courseService.updateEnrollmentCourse(Long.valueOf(authentication.getName()), courseId, enrollmentCourseRequestDto));
     }
 
     // Course Delete
     @DeleteMapping("/enrollment/{courseId}")
     public ResponseDto<Boolean> deleteCourse(Authentication authentication, @PathVariable Long courseId) {
-        return new ResponseDto<Boolean>(courseService.deleteEnrollmentCourse(Long.valueOf(authentication.getName()), Long.valueOf(courseId)));
+        return new ResponseDto<>(courseService.deleteEnrollmentCourse(Long.valueOf(authentication.getName()), Long.valueOf(courseId)));
     }
 
     // Using Course Create
     @PostMapping("/using")
     public ResponseDto<Boolean> createUsingCourse(Authentication authentication, @RequestBody UsingCourseRequestDto requestDto){
-        return new ResponseDto<Boolean>(courseService.createUsingCourse(Long.valueOf(authentication.getName()), requestDto));
+        return new ResponseDto<>(courseService.createUsingCourse(Long.valueOf(authentication.getName()), requestDto));
     }
 
     @GetMapping("/list/main/tag")
