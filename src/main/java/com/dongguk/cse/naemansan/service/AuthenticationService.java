@@ -3,9 +3,9 @@ package com.dongguk.cse.naemansan.service;
 import com.dongguk.cse.naemansan.common.ErrorCode;
 import com.dongguk.cse.naemansan.common.RestApiException;
 import com.dongguk.cse.naemansan.domain.*;
+import com.dongguk.cse.naemansan.domain.type.EUserRole;
 import com.dongguk.cse.naemansan.domain.type.ImageUseType;
-import com.dongguk.cse.naemansan.domain.type.LoginProviderType;
-import com.dongguk.cse.naemansan.domain.type.UserRoleType;
+import com.dongguk.cse.naemansan.domain.type.ELoginProvider;
 import com.dongguk.cse.naemansan.dto.response.JwtResponseDto;
 import com.dongguk.cse.naemansan.repository.ImageRepository;
 import com.dongguk.cse.naemansan.repository.UserRepository;
@@ -16,12 +16,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Random;
 
 @Slf4j
@@ -34,11 +32,8 @@ public class AuthenticationService {
     private final JwtProvider jwtProvider;
     private final Oauth2Util oauth2Util;
 
-    @Value("${spring.image.path: aaa.bbb.ccc}")
-    private String FOLDER_PATH;
-
-    public String getRedirectUrl(LoginProviderType loginProviderType) {
-        switch (loginProviderType) {
+    public String getRedirectUrl(ELoginProvider ELoginProvider) {
+        switch (ELoginProvider) {
             case KAKAO -> {
                 return oauth2Util.getKakaoRedirectUrl();
             }
@@ -51,21 +46,35 @@ public class AuthenticationService {
         }
         return null;
     }
-    public JwtResponseDto login(String authorizationCode, LoginProviderType loginProviderType) {
-        // Load User Data in Oauth Server
+
+    public String getAccessToken(String authorizationCode, ELoginProvider ELoginProvider) {
         String accessToken = null;
-        String socialId = null;
-        switch (loginProviderType) {
+        switch (ELoginProvider) {
             case KAKAO -> {
                 accessToken = oauth2Util.getKakaoAccessToken(authorizationCode);
-                socialId = oauth2Util.getKakaoUserInformation(accessToken);
             }
             case GOOGLE -> {
                 accessToken = oauth2Util.getGoogleAccessToken(authorizationCode);
+            }
+            case APPLE -> {
+                accessToken = authorizationCode;
+            }
+        }
+        return accessToken;
+    }
+
+    public JwtResponseDto login(String accessToken, ELoginProvider provider) {
+        // Load User Data in Oauth Server
+        String socialId = null;
+        switch (provider) {
+            case KAKAO -> {
+                socialId = oauth2Util.getKakaoUserInformation(accessToken);
+            }
+            case GOOGLE -> {
                 socialId = oauth2Util.getGoogleUserInformation(accessToken);
             }
             case APPLE -> {
-                socialId = oauth2Util.getAppleUserInformation(authorizationCode);
+                socialId = oauth2Util.getAppleUserInformation(accessToken);
             }
         }
 
@@ -74,38 +83,37 @@ public class AuthenticationService {
 
         // 랜덤 닉네임 생성
         Random random = new Random();
-        String userName = loginProviderType.toString() + "-";
-        for (int i = 0; i < 3; i++) {
-            userName += String.format("%04d", random.nextInt(1000));
-        }
 
         // User 탐색
-        Optional<User> user = userRepository.findBySerialIdAndLoginProviderType(socialId, loginProviderType);
-        User loginUser = null;
+        final String serialId = socialId;
+        User user = userRepository.findBySerialIdAndProvider(socialId, provider)
+                .orElseGet(() -> {
+                    String userName = provider.toString() + "-";
+                    for (int i = 0; i < 3; i++) {
+                        userName += String.format("%04d", random.nextInt(1000));
+                    }
 
-        // 기존 유저가 아니라면 새로운 Data 저장, 기존 유저라면 Load
-        if (user.isEmpty()) {
-//            loginUser = userRepository.save(User.builder()
-//                    .socialId(socialId)
-//                    .name(userName)
-//                    .loginProviderType(loginProviderType)
-//                    .userRoleType(UserRoleType.USER)
-//                    .build());
-//            imageRepository.save(Image.builder()
-//                    .useObject(loginUser)
-//                    .imageUseType(ImageUseType.USER)
-//                    .originName("default_image.png")
-//                    .uuidName("0_default_image.png")
-//                    .type("image/png")
-//                    .path(FOLDER_PATH + "0_default_image.png").build());
-        } else {
-            loginUser = user.get();
-        }
+                    User loginUser = userRepository.save(User.builder()
+                            .serialId(serialId)
+                            .nickname(userName)
+                            .provider(provider)
+                            .role(EUserRole.USER)
+                            .build());
+
+                    imageRepository.save(Image.builder()
+                            .useObject(loginUser)
+                            .imageUseType(ImageUseType.USER)
+                            .originName("default_image.png")
+                            .uuidName("0_default_image.png")
+                            .type("image/png").build());
+
+                    return loginUser;
+                });
 
         // JwtToken 생성, 기존 Refresh Token 탐색
-        JwtToken jwtToken = jwtProvider.createTotalToken(loginUser.getId(), loginUser.getUserRoleType());
-//        loginUser.setRefreshToken(jwtToken.getRefresh_token());
-//        loginUser.setIsLogin(true);
+        JwtToken jwtToken = jwtProvider.createTotalToken(user.getId(), user.getRole());
+
+        user.updateRefreshToken(jwtToken.getRefresh_token());
 
         // Jwt 반환
         return JwtResponseDto.builder()

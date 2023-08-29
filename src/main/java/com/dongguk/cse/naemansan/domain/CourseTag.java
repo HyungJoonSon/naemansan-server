@@ -1,6 +1,5 @@
 package com.dongguk.cse.naemansan.domain;
 
-import com.dongguk.cse.naemansan.domain.type.CourseTagType;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;

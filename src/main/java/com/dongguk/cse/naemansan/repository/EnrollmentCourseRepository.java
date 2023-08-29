@@ -2,7 +2,7 @@ package com.dongguk.cse.naemansan.repository;
 
 import com.dongguk.cse.naemansan.domain.EnrollmentCourse;
 import com.dongguk.cse.naemansan.domain.User;
-import com.dongguk.cse.naemansan.domain.type.CourseTagType;
+import com.dongguk.cse.naemansan.domain.type.ECourseTag;
 import org.locationtech.jts.geom.Point;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
