@@ -107,7 +107,6 @@ public class NotificationService {
                     .title(title)
                     .body(content).build();
             notificationUtil.sendNotificationByToken(fcmNotificationDto);
-            //notificationUtil.sendMessageTo(fcmNotificationDto); //버전2
         }
     }
 
@@ -132,8 +131,7 @@ public class NotificationService {
                     .targetUserId(toUserId)
                     .title(title)
                     .body(content).build();
-            //notificationUtil.sendNotificationByToken(fcmNotificationDto);
-            notificationUtil.sendMessageTo(fcmNotificationDto); //버전2
+            notificationUtil.sendNotificationByToken(fcmNotificationDto);
         }
     }
 }

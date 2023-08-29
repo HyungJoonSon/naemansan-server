@@ -8,7 +8,7 @@ import lombok.Getter;
 import java.sql.Timestamp;
 
 @Builder
-@AllArgsConstructor //추가
+@AllArgsConstructor
 @Getter
 public class NotificationDto {
     private Long id;
