@@ -1,6 +1,7 @@
 # Naemansan Spring Web Server
 
 내가 만든 산책로는 Spring Web Server를 주축으로 서버가 가동합니다. <br>
+만약 Docker 실행을 원하실 경우 DockerFile을 사용해주세요. <br>
 
 -   Java Version : 17 이상
 -   Server : Spring
