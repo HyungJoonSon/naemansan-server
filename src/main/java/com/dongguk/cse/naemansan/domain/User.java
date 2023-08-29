@@ -1,13 +1,11 @@
 package com.dongguk.cse.naemansan.domain;
 
-import com.dongguk.cse.naemansan.domain.type.LoginProviderType;
-import com.dongguk.cse.naemansan.domain.type.UserRoleType;
+import com.dongguk.cse.naemansan.domain.type.ELoginProvider;
+import com.dongguk.cse.naemansan.domain.type.EUserRole;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.bouncycastle.util.Times;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.sql.Timestamp;
@@ -28,7 +26,7 @@ public class User {
 
     @Column(name = "provider")
     @Enumerated(EnumType.STRING)
-    private LoginProviderType loginProviderType;
+    private ELoginProvider provider;
 
     @Column(name = "serial_id")
     private String serialId;
@@ -44,7 +42,7 @@ public class User {
 
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
-    private UserRoleType userRoleType;
+    private EUserRole userRoleType;
 
     @Column(name = "created_date")
     private Timestamp createdDate;
@@ -99,9 +97,10 @@ public class User {
     private List<Comment> comments = new ArrayList<>();
 
 
-    public User(LoginProviderType providerType, String serialId, String nickname, String password,
-                String introduction, UserRoleType role) {
-        this.loginProviderType = providerType;
+    @Builder
+    public User(ELoginProvider provider, String serialId, String nickname, String password,
+                String introduction, EUserRole role) {
+        this.provider = provider;
         this.serialId = serialId;
         this.nickname = nickname;
         this.password = password;
@@ -115,6 +114,7 @@ public class User {
     }
 
     public void updateRefreshToken(String refreshToken) {
+        this.isLogin = true;
         this.refreshToken = refreshToken;
     }
 

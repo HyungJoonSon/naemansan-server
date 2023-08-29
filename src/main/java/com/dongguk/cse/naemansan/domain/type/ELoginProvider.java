@@ -1,5 +1,5 @@
 package com.dongguk.cse.naemansan.domain.type;
 
-public enum LoginProviderType {
+public enum ELoginProvider {
     KAKAO, GOOGLE, APPLE
 }
