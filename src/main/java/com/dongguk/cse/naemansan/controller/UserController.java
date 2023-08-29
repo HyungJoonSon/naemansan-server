@@ -28,7 +28,7 @@ public class UserController {
     private final FollowService followService;
     @GetMapping("")
     public ResponseDto<UserDto> readUser(Authentication authentication) {
-        return new ResponseDto<UserDto>(userService.readUserProfile(Long.valueOf(authentication.getName())));
+        return new ResponseDto<>(userService.readUserProfile(Long.valueOf(authentication.getName())));
     }
     @GetMapping("/{otherUserId}")
     public ResponseDto<UserDto> readUser(@PathVariable Long otherUserId) {
@@ -71,7 +71,7 @@ public class UserController {
     public ResponseDto<?> createUserTag(Authentication authentication, @RequestBody UserTagRequestDto requestDto) {
         Map<String, Object> map = new HashMap<>();
         map.put("tags", userService.createTagByUserChoice(Long.valueOf(authentication.getName()), requestDto));
-        return new ResponseDto<Map<String, Object>>(map);
+        return new ResponseDto<>(map);
     }
 
     @GetMapping("/tags")

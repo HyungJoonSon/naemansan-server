@@ -3,18 +3,15 @@ package com.dongguk.cse.naemansan.service;
 import com.dongguk.cse.naemansan.common.ErrorCode;
 import com.dongguk.cse.naemansan.common.RestApiException;
 import com.dongguk.cse.naemansan.domain.*;
-import com.dongguk.cse.naemansan.dto.CourseTagDto;
+import com.dongguk.cse.naemansan.domain.type.ETagStatus;
+import com.dongguk.cse.naemansan.dto.TagDto;
 import com.dongguk.cse.naemansan.dto.request.UserDeviceRequestDto;
-import com.dongguk.cse.naemansan.dto.request.UserPaymentRequestDto;
 import com.dongguk.cse.naemansan.dto.request.UserTagRequestDto;
 import com.dongguk.cse.naemansan.dto.response.CommentListDto;
-import com.dongguk.cse.naemansan.dto.response.EnrollmentCourseListDto;
 import com.dongguk.cse.naemansan.dto.response.UserDto;
 import com.dongguk.cse.naemansan.dto.request.UserRequestDto;
 import com.dongguk.cse.naemansan.repository.*;
 import com.dongguk.cse.naemansan.util.CourseUtil;
-import com.siot.IamportRestClient.response.IamportResponse;
-import com.siot.IamportRestClient.response.Payment;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -26,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -34,6 +32,7 @@ import java.util.List;
 public class UserService {
     private final UserRepository userRepository;
     private final UserTagRepository userTagRepository;
+    private final TagRepository tagRepository;
     private final CommentRepository commentRepository;
     private final CourseUtil courseUtil;
 
@@ -76,7 +75,7 @@ public class UserService {
     public Boolean deleteUserProfile(Long id) {
         // 삭제할 유저를 찾고, 해당 유저가 작성한 course, comment 를 Super_Admin(삭제된 게시물 용) 계정으로 Update
         User user = userRepository.findById(id).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND_USER));
-        User Admin = userRepository.findById(1l).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND_USER));
+        User Admin = userRepository.findById(1L).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND_USER));
 
         List<EnrollmentCourse> enrollmentCourseList = user.getEnrollmentCourses();
         List<Comment> comments =  user.getComments();
@@ -92,45 +91,37 @@ public class UserService {
         return Boolean.TRUE;
     }
 
-    public List<CourseTagDto> createTagByUserChoice(Long userId, UserTagRequestDto requestDto) {
+    public List<TagDto> createTagByUserChoice(Long userId, UserTagRequestDto requestDto) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND_USER));
+        List<Tag> tags = tagRepository.findTagsByIds(requestDto.getTags().stream()
+                .map(tagDto -> tagDto.getName().getId())
+                .collect(Collectors.toList()));
 
-        List<UserTag> userTags = courseUtil.getTagDto2TagForUser(user, requestDto.getTags());
-        userTagRepository.saveAll(userTags);
+        userTagRepository.saveAll(courseUtil.getTag2UserTag(user, tags));
 
-        return courseUtil.getTag2TagDtoForUser(userTags);
+        return courseUtil.getTag2TagDto(tags);
     }
 
-    public List<CourseTagDto> readTagByUserChoice(Long userId) {
+    @Deprecated
+    public List<TagDto> readTagByUserChoice(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND_USER));
-        List<UserTag> userTags = userTagRepository.findByUser(user);
 
-        return courseUtil.getTag2TagDtoForUser(userTags);
+        return courseUtil.getTag2TagDto(user.getUserTags().stream()
+                .map(UserTag::getTag)
+                .collect(Collectors.toList()));
     }
 
-    public List<CourseTagDto> updateTagByUserChoice(Long userId, UserTagRequestDto requestDto) {
+    public List<TagDto> updateTagByUserChoice(Long userId, UserTagRequestDto requestDto) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND_USER));
         userTagRepository.deleteAll(user.getUserTags());
+        List<Tag> tags = tagRepository.findTagsByIds(requestDto.getTags().stream()
+                .filter(tagDto -> tagDto.getStatus() != ETagStatus.DELETE)
+                .map(tagDto -> tagDto.getName().getId())
+                .collect(Collectors.toList()));
 
-        List<UserTag> userTags = userTagRepository.saveAll(courseUtil.getTagDto2TagForUser(user, requestDto.getTags()));
-//        List<UserTag> userTags = new ArrayList<>();
-//        for (CourseTagDto tagDto : requestDto.getTags()) {
-//            switch (tagDto.getStatus()) {
-//                case NEW -> {
-//                    userTags.add(userTagRepository.save(UserTag.builder()
-//                            .user(user)
-//                            .tag(tagDto.getName()).build()));
-//                }
-//                case DELETE -> {
-//                    userTagRepository.deleteByUserAndTag(user, tagDto.getName()); }
-//                case DEFAULT -> {
-//                    userTags.add(UserTag.builder()
-//                            .user(user)
-//                            .tag(tagDto.getName()).build()); }
-//            }
-//        }
+        userTagRepository.saveAll(courseUtil.getTag2UserTag(user, tags));
 
-        return courseUtil.getTag2TagDtoForUser(userTags);
+        return courseUtil.getTag2TagDto(tags);
     }
 
     public List<CommentListDto> readCommentList(Long userId, Long pageNum, Long num) {
@@ -139,91 +130,24 @@ public class UserService {
         Pageable paging = PageRequest.of(pageNum.intValue(), num.intValue(), Sort.by(Sort.Direction.DESC, "createdDate"));
         Page<Comment> comments = commentRepository.findListByUser(user, paging);
 
+
+
         List<CommentListDto> list = new ArrayList<>();
 
         for (Comment comment: comments.getContent()) {
             EnrollmentCourse course = comment.getEnrollmentCourse();
+
             list.add(CommentListDto.builder()
                     .id(comment.getId())
                     .course_id(course.getId())
                     .course_title(course.getTitle())
                     .content(comment.getContent())
-                    .tags(courseUtil.getTag2TagDtoForCourse(course.getCourseTags().subList(0, 2))).build());
+                    .tags(courseUtil.getTag2TagDto(course.getCourseTags().stream()
+                            .map(CourseTag::getTag)
+                            .collect(Collectors.toList()))).build());
         }
 
         return list;
-    }
-
-    public List<EnrollmentCourseListDto> readLikeCourseList(Long userId, Long pageNum, Long num) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND_USER));
-
-        List<Like> likeList = user.getLikes();
-
-        List<EnrollmentCourseListDto> enrollmentCourseListDtoList = new ArrayList<>();
-        for (Like like : likeList) {
-            EnrollmentCourse enrollmentCourse = like.getEnrollmentCourse();
-            enrollmentCourseListDtoList.add(EnrollmentCourseListDto.builder()
-                    .id(enrollmentCourse.getId())
-                    .title(enrollmentCourse.getTitle())
-                    .created_date(enrollmentCourse.getCreatedDate())
-                    .tags(courseUtil.getTag2TagDtoForCourse(enrollmentCourse.getCourseTags()))
-                    .start_location_name(enrollmentCourse.getStartLocationName())
-                    .distance(enrollmentCourse.getDistance())
-                    .like_cnt((long) enrollmentCourse.getLikes().size())
-                    .using_unt((long) enrollmentCourse.getUsingCourses().size())
-                    .is_like(true).build());
-            }
-
-        return enrollmentCourseListDtoList;
-    }
-
-    public List<EnrollmentCourseListDto> readEnrollmentCourseList(Long userId, Long pageNum, Long num) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND_USER));
-
-        List<EnrollmentCourse> enrollmentCourseList = user.getEnrollmentCourses();
-
-        List<EnrollmentCourseListDto> enrollmentCourseListDtoList = new ArrayList<>();
-        for (EnrollmentCourse enrollmentCourse : enrollmentCourseList) {
-            enrollmentCourseListDtoList.add(EnrollmentCourseListDto.builder()
-                    .id(enrollmentCourse.getId())
-                    .title(enrollmentCourse.getTitle())
-                    .created_date(enrollmentCourse.getCreatedDate())
-                    .tags(courseUtil.getTag2TagDtoForCourse(enrollmentCourse.getCourseTags()))
-                    .start_location_name(enrollmentCourse.getStartLocationName())
-                    .distance(enrollmentCourse.getDistance())
-                    .like_cnt((long) enrollmentCourse.getLikes().size())
-                    .using_unt((long) enrollmentCourse.getUsingCourses().size())
-                    .is_like(true).build());
-        }
-
-        return enrollmentCourseListDtoList;
-    }
-
-    public List<EnrollmentCourseListDto> readFinishCourseList(Long userId, Long pageNum, Long num) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND_USER));
-
-        List<UsingCourse> usingCourseList = user.getUsingCourses();
-
-        List<EnrollmentCourseListDto> enrollmentCourseListDtoList = new ArrayList<>();
-        for (UsingCourse usingCourse : usingCourseList) {
-            if (!usingCourse.getIsFinished()) {
-                continue;
-            }
-            EnrollmentCourse enrollmentCourse = usingCourse.getEnrollmentCourse();
-
-            enrollmentCourseListDtoList.add(EnrollmentCourseListDto.builder()
-                    .id(enrollmentCourse.getId())
-                    .title(enrollmentCourse.getTitle())
-                    .created_date(enrollmentCourse.getCreatedDate())
-                    .tags(courseUtil.getTag2TagDtoForCourse(enrollmentCourse.getCourseTags()))
-                    .start_location_name(enrollmentCourse.getStartLocationName())
-                    .distance(enrollmentCourse.getDistance())
-                    .like_cnt((long) enrollmentCourse.getLikes().size())
-                    .using_unt((long) enrollmentCourse.getUsingCourses().size())
-                    .is_like(true).build());
-        }
-
-        return enrollmentCourseListDtoList;
     }
 
     public Boolean updateUserDevice(Long userId, UserDeviceRequestDto requestDto) {

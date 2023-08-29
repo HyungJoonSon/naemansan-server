@@ -86,7 +86,7 @@ public class AuthenticationService {
 
         // User 탐색
         final String serialId = socialId;
-        User user = userRepository.findBySerialIdAndLoginProviderType(socialId, provider)
+        User user = userRepository.findBySerialIdAndProvider(socialId, provider)
                 .orElseGet(() -> {
                     String userName = provider.toString() + "-";
                     for (int i = 0; i < 3; i++) {
@@ -111,7 +111,7 @@ public class AuthenticationService {
                 });
 
         // JwtToken 생성, 기존 Refresh Token 탐색
-        JwtToken jwtToken = jwtProvider.createTotalToken(user.getId(), user.getUserRoleType());
+        JwtToken jwtToken = jwtProvider.createTotalToken(user.getId(), user.getRole());
 
         user.updateRefreshToken(jwtToken.getRefresh_token());
 

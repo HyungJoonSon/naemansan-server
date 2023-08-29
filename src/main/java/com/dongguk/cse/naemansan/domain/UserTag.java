@@ -28,4 +28,11 @@ public class UserTag {
         this.user = user;
         this.tag = tag;
     }
+
+    public static UserTag of(User user, Tag tag) {
+        return UserTag.builder()
+                .user(user)
+                .tag(tag)
+                .build();
+    }
 }

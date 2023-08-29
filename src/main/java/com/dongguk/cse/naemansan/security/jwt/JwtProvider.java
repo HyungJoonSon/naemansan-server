@@ -24,7 +24,7 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class JwtProvider implements InitializingBean {
     private final UserRepository userRepository;
-    @Value("${jwt.secret: abc}")
+    @Value("${jwt.secret}")
     private String secretKey;
     private Key key;
     private static final Long accessExpiredMs = 60 * 60 * 2 * 1000l;

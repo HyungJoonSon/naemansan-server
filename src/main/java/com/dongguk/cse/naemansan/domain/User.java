@@ -42,7 +42,7 @@ public class User {
 
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
-    private EUserRole userRoleType;
+    private EUserRole role;
 
     @Column(name = "created_date")
     private Timestamp createdDate;
@@ -105,7 +105,7 @@ public class User {
         this.nickname = nickname;
         this.password = password;
         this.introduction = introduction;
-        this.userRoleType = role;
+        this.role = role;
         this.createdDate = Timestamp.valueOf(LocalDateTime.now());
         this.isLogin = true;
         this.isIos = false;
