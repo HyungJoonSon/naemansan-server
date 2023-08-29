@@ -1,5 +1,6 @@
 package com.dongguk.cse.naemansan.controller;
 
+import com.dongguk.cse.naemansan.annotation.UserId;
 import com.dongguk.cse.naemansan.exception.ResponseDto;
 import com.dongguk.cse.naemansan.dto.response.JwtResponseDto;
 import com.dongguk.cse.naemansan.domain.type.ELoginProvider;
@@ -34,17 +35,17 @@ public class AuthController {
     }
 
     @GetMapping("/google")
-    public ResponseDto<Map<String, String>> getGOOGLE_REDIRECT_URL() {
+    public ResponseDto<Map<String, String>> getGoogleRedirectUrl() {
         Map<String, String> map = new HashMap<>();
         map.put("url", authService.getRedirectUrl(ELoginProvider.GOOGLE));
-        return new ResponseDto(map);
+        return new ResponseDto<>(map);
     }
 
     @GetMapping("/apple")
     public ResponseDto<Map<String, String>> getAppleRedirectUrl() {
         Map<String, String> map = new HashMap<>();
         map.put("url", authService.getRedirectUrl(ELoginProvider.APPLE));
-        return new ResponseDto(map);
+        return new ResponseDto<>(map);
     }
 
     /**
@@ -89,12 +90,12 @@ public class AuthController {
 
     /**
      * 로그아웃 요청을 처리한다.
-     * @param authentication
+     * @param userId
      * @return Boolean
      */
     @GetMapping("/logout")
-    public ResponseDto<Boolean> logout(Authentication authentication) {
-        return new ResponseDto<Boolean>(authService.logout(Long.valueOf(authentication.getName())));
+    public ResponseDto<Boolean> logout(@UserId Long userId) {
+        return new ResponseDto<>(authService.logout(userId));
     }
 
     /**
@@ -102,8 +103,8 @@ public class AuthController {
      * @param request
      * @return TokenDto
      */
-    @PostMapping("/refresh")
-    public ResponseDto<TokenDto> UpdateAccessToken(HttpServletRequest request) {
-        return new ResponseDto(authService.getAccessTokenByRefreshToken(request));
+    @PostMapping("/reissue")
+    public ResponseDto<?> UpdateAccessToken(HttpServletRequest request) {
+        return new ResponseDto<>(authService.getAccessTokenByRefreshToken(request));
     }
 }

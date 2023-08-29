@@ -1,5 +1,6 @@
 package com.dongguk.cse.naemansan.controller;
 
+import com.dongguk.cse.naemansan.annotation.UserId;
 import com.dongguk.cse.naemansan.exception.ExceptionDto;
 import com.dongguk.cse.naemansan.domain.type.ImageUseType;
 import com.dongguk.cse.naemansan.exception.ResponseDto;
@@ -42,16 +43,16 @@ public class ImageController {
     }
 
     @PostMapping("/image/user")
-    public ResponseDto<?> uploadUserImage(Authentication authentication, @RequestParam("image") MultipartFile file) throws IOException {
+    public ResponseDto<?> uploadUserImage(@UserId Long userId, @RequestParam("image") MultipartFile file) throws IOException {
         Map<String, String> map = new HashMap<>();
-        map.put("uuid_name", imageService.uploadImage(Long.valueOf(authentication.getName()), ImageUseType.USER, file));
-        return new ResponseDto(map);
+        map.put("uuid_name", imageService.uploadImage(userId, ImageUseType.USER, file));
+        return new ResponseDto<>(map);
     }
 
     @PostMapping("/admin/image/shop/{shopId}")
     public ResponseDto<?> uploadShopImage(@PathVariable Long shopId, @RequestParam("image") MultipartFile file) throws IOException {
         Map<String, String> map = new HashMap<>();
         map.put("uuid_name", imageService.uploadImage(shopId, ImageUseType.SHOP, file));
-        return new ResponseDto(map);
+        return new ResponseDto<>(map);
     }
 }

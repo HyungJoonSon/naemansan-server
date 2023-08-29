@@ -35,7 +35,8 @@ public class ImageService {
 
     public String uploadImage(Long useId, ImageUseType imageUseType, MultipartFile file) throws IOException {
         // File Path Fetch
-        String uuidImageName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+        String uuidImageName = UUID.randomUUID().toString() + "."
+                + file.getContentType().substring(file.getContentType().indexOf("/") + 1);
         String filePath = FOLDER_PATH + uuidImageName;
 
         // File Upload

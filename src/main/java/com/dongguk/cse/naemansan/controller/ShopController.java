@@ -20,7 +20,7 @@ public class ShopController {
         return new ResponseDto<List<ShopDto>>(commonService.readShopList(latitude, longitude, page, num));
     }
 
-    @PostMapping("/admin/hop")
+    @PostMapping("/admin/shop")
     public ResponseDto<?> createShopProfile(@RequestBody ShopRequestDto requestDto) {
         return new ResponseDto<Boolean>(commonService.createShopProfile(requestDto));
     }

@@ -1,5 +1,6 @@
 package com.dongguk.cse.naemansan.controller;
 
+import com.dongguk.cse.naemansan.annotation.UserId;
 import com.dongguk.cse.naemansan.dto.NotificationDto;
 import com.dongguk.cse.naemansan.exception.ResponseDto;
 import com.dongguk.cse.naemansan.dto.request.NotificationRequestDto;
@@ -33,19 +34,19 @@ public class NotificationController {
 
     //Notification Read
     @GetMapping("")
-    public ResponseDto<List<NotificationDto>> readNotification(Authentication authentication, @RequestParam("page") Long page, @RequestParam("num") Long num) {
-        return new ResponseDto<List<NotificationDto>>(notificationService.readNotification(Long.valueOf(authentication.getName()), page, num));
+    public ResponseDto<List<NotificationDto>> readNotification(@UserId Long userId, @RequestParam("page") Long page, @RequestParam("num") Long num) {
+        return new ResponseDto<List<NotificationDto>>(notificationService.readNotification(userId, page, num));
     }
 
     //Notification Update
     @PutMapping("/{notificationId}")
-    public ResponseDto<Boolean> updateNotification(Authentication authentication, @PathVariable Long notificationId) {
-        return new ResponseDto<Boolean>(notificationService.updateNotification(Long.valueOf(authentication.getName()), notificationId));
+    public ResponseDto<Boolean> updateNotification(@UserId Long userId, @PathVariable Long notificationId) {
+        return new ResponseDto<Boolean>(notificationService.updateNotification(userId, notificationId));
     }
 
     //Notification Delete
     @DeleteMapping("/{notificationId}")
-    public ResponseDto<Boolean> deleteNotification(Authentication authentication, @PathVariable Long notificationId) {
-        return new ResponseDto<Boolean>(notificationService.deleteNotification(Long.valueOf(authentication.getName()), notificationId));
+    public ResponseDto<Boolean> deleteNotification(@UserId Long userId, @PathVariable Long notificationId) {
+        return new ResponseDto<Boolean>(notificationService.deleteNotification(userId, notificationId));
     }
 }

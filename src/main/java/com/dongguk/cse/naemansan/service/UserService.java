@@ -102,7 +102,6 @@ public class UserService {
         return courseUtil.getTag2TagDto(tags);
     }
 
-    @Deprecated
     public List<TagDto> readTagByUserChoice(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND_USER));
 
