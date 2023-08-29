@@ -1,6 +1,5 @@
-package com.dongguk.cse.naemansan.common;
+package com.dongguk.cse.naemansan.exception;
 
-import com.dongguk.cse.naemansan.common.ErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

@@ -1,7 +1,7 @@
 package com.dongguk.cse.naemansan.service;
 
-import com.dongguk.cse.naemansan.common.ErrorCode;
-import com.dongguk.cse.naemansan.common.RestApiException;
+import com.dongguk.cse.naemansan.exception.ErrorCode;
+import com.dongguk.cse.naemansan.exception.RestApiException;
 import com.dongguk.cse.naemansan.domain.*;
 import com.dongguk.cse.naemansan.domain.type.ETagStatus;
 import com.dongguk.cse.naemansan.dto.TagDto;
@@ -102,7 +102,6 @@ public class UserService {
         return courseUtil.getTag2TagDto(tags);
     }
 
-    @Deprecated
     public List<TagDto> readTagByUserChoice(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND_USER));
 

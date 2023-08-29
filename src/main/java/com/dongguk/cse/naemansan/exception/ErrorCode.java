@@ -1,6 +1,5 @@
-package com.dongguk.cse.naemansan.common;
+package com.dongguk.cse.naemansan.exception;
 
-import com.google.api.Http;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

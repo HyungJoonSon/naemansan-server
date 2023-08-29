@@ -1,5 +1,6 @@
 package com.dongguk.cse.naemansan.security.filter;
 
+import com.dongguk.cse.naemansan.common.Constants;
 import com.dongguk.cse.naemansan.security.CustomUserDetail;
 import com.dongguk.cse.naemansan.security.CustomUserDetailService;
 import com.dongguk.cse.naemansan.security.jwt.JwtProvider;
@@ -24,12 +25,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtProvider jwtProvider;
     private final CustomUserDetailService userDetailsService;
 
-    private final String[] urls = { "/favicon.ico",
-                                    "/auth/kakao", "/auth/kakao/callback",
-                                    "/auth/google", "/auth/google/callback",
-                                    "/auth/apple", "/auth/apple/callback",
-                                    "/auth/refresh", "/image" };
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = JwtProvider.refineToken(request);
@@ -48,6 +43,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return Arrays.stream(urls).filter(url -> url.equals(request.getRequestURI())).count() > 0;
+        return Arrays.stream(Constants.NO_NEED_AUTH_URLS).anyMatch(url -> url.equals(request.getServletPath()));
     }
 }

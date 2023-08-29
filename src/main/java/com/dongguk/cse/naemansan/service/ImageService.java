@@ -1,7 +1,7 @@
 package com.dongguk.cse.naemansan.service;
 
-import com.dongguk.cse.naemansan.common.ErrorCode;
-import com.dongguk.cse.naemansan.common.RestApiException;
+import com.dongguk.cse.naemansan.exception.ErrorCode;
+import com.dongguk.cse.naemansan.exception.RestApiException;
 import com.dongguk.cse.naemansan.domain.Image;
 import com.dongguk.cse.naemansan.domain.Shop;
 import com.dongguk.cse.naemansan.domain.User;
@@ -19,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -36,7 +35,8 @@ public class ImageService {
 
     public String uploadImage(Long useId, ImageUseType imageUseType, MultipartFile file) throws IOException {
         // File Path Fetch
-        String uuidImageName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+        String uuidImageName = UUID.randomUUID().toString() + "."
+                + file.getContentType().substring(file.getContentType().indexOf("/") + 1);
         String filePath = FOLDER_PATH + uuidImageName;
 
         // File Upload

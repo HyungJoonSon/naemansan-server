@@ -1,7 +1,7 @@
 package com.dongguk.cse.naemansan.service;
 
-import com.dongguk.cse.naemansan.common.ErrorCode;
-import com.dongguk.cse.naemansan.common.RestApiException;
+import com.dongguk.cse.naemansan.exception.ErrorCode;
+import com.dongguk.cse.naemansan.exception.RestApiException;
 import com.dongguk.cse.naemansan.domain.*;
 import com.dongguk.cse.naemansan.domain.type.ECourseTag;
 import com.dongguk.cse.naemansan.domain.type.ETagStatus;
@@ -169,6 +169,7 @@ public class CourseService {
                 .start_location_name(enrollmentCourse.getStartLocationName())
                 .locations(courseUtil.getPoint2PointDto(enrollmentCourse.getLocations()))
                 .distance(enrollmentCourse.getDistance())
+                .like_cnt(0L)
                 .is_like(false).build();
     }
 
@@ -223,7 +224,8 @@ public class CourseService {
         enrollmentCourse.updateCourse(requestDto.getTitle(), requestDto.getIntroduction());
 
         // Course Tag Data Update, 최적화 필요
-        courseTagRepository.deleteAll(enrollmentCourse.getCourseTags());
+        courseTagRepository.deleteAllInBatch(enrollmentCourse.getCourseTags());
+        courseTagRepository.flush();
 
         List<Tag> tags = tagRepository.findTagsByIds(requestDto.getTags().stream()
                 .filter(tagDto -> tagDto.getStatus() != ETagStatus.DELETE)
@@ -246,6 +248,7 @@ public class CourseService {
                 .start_location_name(enrollmentCourse.getStartLocationName())
                 .locations(locations)
                 .distance(enrollmentCourse.getDistance())
+                .like_cnt((long) enrollmentCourse.getLikes().size())
                 .is_like(courseUtil.existLike(user, enrollmentCourse)).build();
     }
 
@@ -479,7 +482,7 @@ public class CourseService {
         likeRepository.delete(like);
 
         Map<String, Object> map = new HashMap<>();
-        map.put("like_cnt", enrollmentCourse.getLikes().size());
+        map.put("like_cnt", enrollmentCourse.getLikes().size() - 1);
         map.put("is_like", Boolean.FALSE);
 
         return map;

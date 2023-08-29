@@ -1,6 +1,7 @@
 package com.dongguk.cse.naemansan.controller;
 
-import com.dongguk.cse.naemansan.common.ResponseDto;
+import com.dongguk.cse.naemansan.annotation.UserId;
+import com.dongguk.cse.naemansan.exception.ResponseDto;
 import com.dongguk.cse.naemansan.dto.request.CommentRequestDto;
 import com.dongguk.cse.naemansan.dto.response.CommentDto;
 import com.dongguk.cse.naemansan.service.CommentService;
@@ -17,8 +18,10 @@ public class CommentController {
     private final CommentService commentService;
     // Comment Create
     @PostMapping("/{courseId}/comment")
-    public ResponseDto<Boolean> createComment(Authentication authentication, @PathVariable Long courseId, @RequestBody CommentRequestDto commentRequestDto){
-        return new ResponseDto<Boolean>(commentService.createComment(Long.valueOf(authentication.getName()), courseId, commentRequestDto));
+    public ResponseDto<Boolean> createComment(@UserId Long userId,
+                                              @PathVariable Long courseId,
+                                              @RequestBody CommentRequestDto commentRequestDto){
+        return new ResponseDto<Boolean>(commentService.createComment(userId, courseId, commentRequestDto));
     }
 
     // Comment Read
@@ -29,14 +32,14 @@ public class CommentController {
 
     // Comment Update
     @PutMapping("/{courseId}/comment/{commentId}")
-    public ResponseDto<Boolean> updateComment(Authentication authentication, @PathVariable Long courseId,
+    public ResponseDto<Boolean> updateComment(@UserId Long userId, @PathVariable Long courseId,
                                               @PathVariable Long commentId, @RequestBody CommentRequestDto commentRequestDto) {
-        return new ResponseDto<Boolean>(commentService.updateComment(Long.valueOf(authentication.getName()), courseId, commentId, commentRequestDto));
+        return new ResponseDto<Boolean>(commentService.updateComment(userId, courseId, commentId, commentRequestDto));
     }
 
     // Comment Delete
     @DeleteMapping("/{courseId}/comment/{commentId}")
-    public ResponseDto<Boolean> deleteComment(Authentication authentication, @PathVariable Long courseId, @PathVariable Long commentId) {
-        return new ResponseDto<Boolean>(commentService.deleteComment(Long.valueOf(authentication.getName()), courseId, commentId));
+    public ResponseDto<Boolean> deleteComment(@UserId Long userId, @PathVariable Long courseId, @PathVariable Long commentId) {
+        return new ResponseDto<Boolean>(commentService.deleteComment(userId, courseId, commentId));
     }
 }
