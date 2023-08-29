@@ -1,4 +1,4 @@
-package com.dongguk.cse.naemansan.common;
+package com.dongguk.cse.naemansan.exception;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

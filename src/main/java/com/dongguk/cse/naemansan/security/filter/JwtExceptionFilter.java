@@ -1,7 +1,7 @@
 package com.dongguk.cse.naemansan.security.filter;
 
-import com.dongguk.cse.naemansan.common.ErrorCode;
-import com.dongguk.cse.naemansan.security.jwt.JwtProvider;
+import com.dongguk.cse.naemansan.common.Constants;
+import com.dongguk.cse.naemansan.exception.ErrorCode;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -20,10 +20,6 @@ import java.util.Arrays;
 @Slf4j
 @RequiredArgsConstructor
 public class JwtExceptionFilter extends OncePerRequestFilter {
-    private final String[] urls = { "/auth/kakao", "/auth/kakao/callback",
-                                    "/auth/google", "/auth/google/callback",
-                                    "/auth/apple", "/auth/apple/callback",
-                                    "/auth/refresh", "/image"};
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -71,6 +67,6 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return Arrays.stream(urls).filter(url -> url.equals(request.getRequestURI())).count() > 0;
+        return Arrays.stream(Constants.NO_NEED_AUTH_URLS).anyMatch(url -> url.equals(request.getServletPath()));
     }
 }

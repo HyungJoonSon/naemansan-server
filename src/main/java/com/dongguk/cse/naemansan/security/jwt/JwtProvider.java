@@ -1,9 +1,8 @@
 package com.dongguk.cse.naemansan.security.jwt;
 
-import com.dongguk.cse.naemansan.common.ErrorCode;
-import com.dongguk.cse.naemansan.common.RestApiException;
-import com.dongguk.cse.naemansan.domain.User;
-import com.dongguk.cse.naemansan.domain.type.UserRoleType;
+import com.dongguk.cse.naemansan.exception.ErrorCode;
+import com.dongguk.cse.naemansan.exception.RestApiException;
+import com.dongguk.cse.naemansan.domain.type.EUserRole;
 import com.dongguk.cse.naemansan.repository.UserRepository;
 import io.jsonwebtoken.*;
 
@@ -19,14 +18,13 @@ import org.springframework.util.StringUtils;
 
 import java.security.Key;
 import java.util.Date;
-import java.util.Optional;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtProvider implements InitializingBean {
     private final UserRepository userRepository;
-    @Value("${jwt.secret: abc}")
+    @Value("${jwt.secret}")
     private String secretKey;
     private Key key;
     private static final Long accessExpiredMs = 60 * 60 * 2 * 1000l;
@@ -41,7 +39,7 @@ public class JwtProvider implements InitializingBean {
     /**
      * token 생성
      */
-    public String createToken(Long id, UserRoleType userRoleType, boolean isAccess) {
+    public String createToken(Long id, EUserRole userRoleType, boolean isAccess) {
         Claims claims = Jwts.claims();
 
         claims.put("id", id);
@@ -61,7 +59,7 @@ public class JwtProvider implements InitializingBean {
     /**
      * accessToken, refreshToken 생성
      */
-    public JwtToken createTotalToken(Long id, UserRoleType userRoleType) {
+    public JwtToken createTotalToken(Long id, EUserRole userRoleType) {
 
         //Access token 생성
         String accessToken = createToken(id, userRoleType, true);

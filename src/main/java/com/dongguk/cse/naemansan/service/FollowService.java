@@ -1,8 +1,7 @@
 package com.dongguk.cse.naemansan.service;
 
-import com.dongguk.cse.naemansan.common.ErrorCode;
-import com.dongguk.cse.naemansan.common.RestApiException;
-import com.dongguk.cse.naemansan.domain.Comment;
+import com.dongguk.cse.naemansan.exception.ErrorCode;
+import com.dongguk.cse.naemansan.exception.RestApiException;
 import com.dongguk.cse.naemansan.domain.Follow;
 import com.dongguk.cse.naemansan.domain.User;
 import com.dongguk.cse.naemansan.dto.response.FollowDto;
@@ -21,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -59,7 +57,7 @@ public class FollowService {
         for (Follow follow : follows) {
             followDtoList.add(FollowDto.builder()
                     .user_id(follow.getFollowerUser().getId())
-                    .user_name(follow.getFollowerUser().getName()).build());
+                    .user_name(follow.getFollowerUser().getNickname()).build());
         }
 
         // Dto 반환
@@ -78,7 +76,7 @@ public class FollowService {
         for (Follow follow : follows) {
             followDtoList.add(FollowDto.builder()
                     .user_id(follow.getFollowingUser().getId())
-                    .user_name(follow.getFollowingUser().getName()).build());
+                    .user_name(follow.getFollowingUser().getNickname()).build());
         }
 
         // Dto 반환

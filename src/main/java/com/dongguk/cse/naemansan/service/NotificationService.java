@@ -1,16 +1,12 @@
 package com.dongguk.cse.naemansan.service;
 
-import com.dongguk.cse.naemansan.common.ErrorCode;
-import com.dongguk.cse.naemansan.common.RestApiException;
-import com.dongguk.cse.naemansan.domain.Comment;
+import com.dongguk.cse.naemansan.exception.ErrorCode;
+import com.dongguk.cse.naemansan.exception.RestApiException;
 import com.dongguk.cse.naemansan.domain.EnrollmentCourse;
 import com.dongguk.cse.naemansan.domain.Notification;
 import com.dongguk.cse.naemansan.domain.User;
 import com.dongguk.cse.naemansan.dto.NotificationDto;
 import com.dongguk.cse.naemansan.dto.request.FCMNotificationRequestDto;
-import com.dongguk.cse.naemansan.event.CommentNotificationEvent;
-import com.dongguk.cse.naemansan.event.FollowNotificationEvent;
-import com.dongguk.cse.naemansan.event.LikeNotificationEvent;
 import com.dongguk.cse.naemansan.repository.EnrollmentCourseRepository;
 import com.dongguk.cse.naemansan.repository.NotificationRepository;
 import com.dongguk.cse.naemansan.repository.UserRepository;
@@ -18,7 +14,6 @@ import com.dongguk.cse.naemansan.util.NotificationUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -90,9 +85,9 @@ public class NotificationService {
         String content = "오랜만에 산책 어떠신가요?";
 
         if (NotificationType == 1)   //댓글
-            content = fromUser.getName() + "님이 산책로" + course.getTitle() + "에 댓글을 작성하였습니다.";
+            content = fromUser.getNickname() + "님이 산책로" + course.getTitle() + "에 댓글을 작성하였습니다.";
         else if (NotificationType == 2)  //좋아요
-            content = fromUser.getName() + "님이 산책로" + course.getTitle() + "에 좋아요를 눌렀습니다.";
+            content = fromUser.getNickname() + "님이 산책로" + course.getTitle() + "에 좋아요를 눌렀습니다.";
 
 
         if (toUser.getIsIos()) { //ios 푸시알림
@@ -107,7 +102,6 @@ public class NotificationService {
                     .title(title)
                     .body(content).build();
             notificationUtil.sendNotificationByToken(fcmNotificationDto);
-            //notificationUtil.sendMessageTo(fcmNotificationDto); //버전2
         }
     }
 
@@ -119,7 +113,7 @@ public class NotificationService {
         String content = "오랜만에 산책 어떠신가요?";
 
         if (NotificationType == 3)  //팔로우
-            content = fromUser.getName() + "님이 팔로우를 하였습니다";
+            content = fromUser.getNickname() + "님이 팔로우를 하였습니다";
 
         if (toUser.getIsIos()) { //ios 푸시알림
             fcmNotificationDto = FCMNotificationRequestDto.builder()
@@ -132,8 +126,7 @@ public class NotificationService {
                     .targetUserId(toUserId)
                     .title(title)
                     .body(content).build();
-            //notificationUtil.sendNotificationByToken(fcmNotificationDto);
-            notificationUtil.sendMessageTo(fcmNotificationDto); //버전2
+            notificationUtil.sendNotificationByToken(fcmNotificationDto);
         }
     }
 }

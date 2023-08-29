@@ -54,12 +54,6 @@ jar {
 	enabled = false
 }
 
-processResources.dependsOn('copyGitSubmodule')
-
-task copyGitSubmodule(type: Copy) {
-	from('./properties/was')
-	into('./src/main/resources')
-}
 
 tasks.named('test') {
 	useJUnitPlatform()

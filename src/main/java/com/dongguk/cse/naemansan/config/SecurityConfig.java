@@ -37,6 +37,7 @@ public class SecurityConfig {
                             "/auth/google", "/auth/google/callback",
                             "/auth/apple", "/auth/apple/callback",
                             "/auth/refresh", "/image").permitAll()
+                    .requestMatchers("/admin/**").hasRole("ADMIN")
                     .anyRequest().authenticated()
                 .and()
                     .exceptionHandling()

@@ -1,8 +1,9 @@
 package com.dongguk.cse.naemansan.util;
 
 import com.dongguk.cse.naemansan.domain.*;
-import com.dongguk.cse.naemansan.domain.type.TagStatusType;
-import com.dongguk.cse.naemansan.dto.CourseTagDto;
+import com.dongguk.cse.naemansan.domain.type.ECourseTag;
+import com.dongguk.cse.naemansan.domain.type.ETagStatus;
+import com.dongguk.cse.naemansan.dto.TagDto;
 import com.dongguk.cse.naemansan.dto.PointDto;
 import com.dongguk.cse.naemansan.dto.response.EnrollmentCourseListDto;
 import com.google.gson.JsonArray;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -213,51 +215,35 @@ public class CourseUtil {
         return geometryFactory.createPoint(before);
     }
 
-    public List<CourseTag> getTagDto2TagForEnrollmentCourse(EnrollmentCourse enrollmentCourse, List<CourseTagDto> dtoList) {
+    public List<CourseTag> getTagDto2TagForEnrollmentCourse(EnrollmentCourse enrollmentCourse, List<TagDto> dtoList) {
         List<CourseTag> tagList = new ArrayList<>();
 
-        for (CourseTagDto courseTagDto : dtoList) {
-            tagList.add(CourseTag.builder()
-                    .enrollmentCourse(enrollmentCourse).courseTagType(courseTagDto.getName()).build());
-        }
+//        for (CourseTagDto courseTagDto : dtoList) {
+//            tagList.add(CourseTag.builder()
+//                    .enrollmentCourse(enrollmentCourse).courseTagType(courseTagDto.getName()).build());
+//        }
 
         return tagList;
     }
 
-    public List<UserTag> getTagDto2TagForUser(User user, List<CourseTagDto> dtoList) {
-        List<UserTag> tagList = new ArrayList<>();
-
-        for (CourseTagDto tagDto : dtoList) {
-            tagList.add(UserTag.builder()
-                    .user(user)
-                    .tag(tagDto.getName()).build());
-        }
-
-        return tagList;
+    public List<UserTag> getTag2UserTag(User user, List<Tag> tagList) {
+        return tagList.stream()
+                .map(tag -> new UserTag(user, tag))
+                .collect(Collectors.toList());
     }
 
-    public List<CourseTagDto> getTag2TagDtoForCourse(List<CourseTag> tagList) {
-        List<CourseTagDto> dtoList = new ArrayList<>();
-
-        for (CourseTag courseTag : tagList) {
-            dtoList.add(CourseTagDto.builder()
-                    .name(courseTag.getCourseTagType())
-                    .status(TagStatusType.DEFAULT).build());
-        }
-
-        return dtoList;
+    public List<CourseTag> getTag2CourseTag(EnrollmentCourse course, List<Tag> tagList) {
+        return tagList.stream()
+                .map(tag -> new CourseTag(course, tag))
+                .collect(Collectors.toList());
     }
 
-    public List<CourseTagDto> getTag2TagDtoForUser(List<UserTag> tagList) {
-        List<CourseTagDto> dtoList = new ArrayList<>();
-
-        for (UserTag tag : tagList) {
-            dtoList.add(CourseTagDto.builder()
-                    .name(tag.getTag())
-                    .status(TagStatusType.DEFAULT).build());
-        }
-
-        return dtoList;
+    public List<TagDto> getTag2TagDto(List<Tag> tagList) {
+        return tagList.stream()
+                .map(tag -> TagDto.builder()
+                        .name(ECourseTag.existType(tag.getName()))
+                        .status(ETagStatus.DEFAULT).build())
+                .collect(Collectors.toList());
     }
 
     public boolean existLike(User user, EnrollmentCourse enrollmentCourse) {
@@ -277,7 +263,9 @@ public class CourseUtil {
                     .id(enrollmentCourse.getId())
                     .title(enrollmentCourse.getTitle())
                     .created_date(enrollmentCourse.getCreatedDate())
-                    .tags(getTag2TagDtoForCourse(enrollmentCourse.getCourseTags()))
+                    .tags(getTag2TagDto(enrollmentCourse.getCourseTags().stream()
+                                    .map(CourseTag::getTag)
+                                    .collect(Collectors.toList())))
                     .start_location_name(enrollmentCourse.getStartLocationName())
                     .distance(enrollmentCourse.getDistance())
                     .like_cnt((long) enrollmentCourse.getLikes().size())

@@ -19,7 +19,7 @@ public class UserDto {
 
     @Builder
     public UserDto(User user, Image image, Boolean is_premium, Long like_cnt, Long comment_cnt, Long badge_cnt, Long following_cnt, Long follower_cnt) {
-        this.name = user.getName();
+        this.name = user.getNickname();
         this.image_path = image.getUuidName();
         this.introduction = user.getIntroduction();
         this.is_premium = is_premium;

@@ -28,17 +28,17 @@ public class UsingCourse {
     @ManyToOne(fetch = FetchType.LAZY)
     private EnrollmentCourse enrollmentCourse;
 
-    @Column(name = "finish_status", columnDefinition = "TINYINT(1)", nullable = false)
-    private Boolean finishStatus;
+    @Column(name = "is_finished", columnDefinition = "TINYINT(1)", nullable = false)
+    private Boolean isFinished;
 
     @Column(name = "using_date", nullable = false)
     private Timestamp usingDate;
 
     @Builder
-    public UsingCourse(User user, EnrollmentCourse enrollmentCourse, Boolean finishStatus) {
+    public UsingCourse(User user, EnrollmentCourse enrollmentCourse, Boolean isFinished) {
         this.user = user;
         this.enrollmentCourse = enrollmentCourse;
-        this.finishStatus = finishStatus;
+        this.isFinished = isFinished;
         this.usingDate = Timestamp.valueOf(LocalDateTime.now());
     }
 }

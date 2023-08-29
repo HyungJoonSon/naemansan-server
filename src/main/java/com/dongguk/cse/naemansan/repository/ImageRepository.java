@@ -1,6 +1,5 @@
 package com.dongguk.cse.naemansan.repository;
 
-import com.dongguk.cse.naemansan.domain.Advertisement;
 import com.dongguk.cse.naemansan.domain.Image;
 import com.dongguk.cse.naemansan.domain.Shop;
 import com.dongguk.cse.naemansan.domain.User;
@@ -13,6 +12,5 @@ import java.util.Optional;
 public interface ImageRepository extends JpaRepository<Image, Long> {
     Optional<Image> findByUser(User user);
     Optional<Image> findByShop(Shop shop);
-    Optional<Image> findByAdvertisement(Advertisement advertisement);
     Optional<Image> findByUuidName(String uuidName);
 }

@@ -7,42 +7,28 @@ DROP TABLE IF EXISTS `using_courses`;
 DROP TABLE IF EXISTS `enrollment_courses`;
 DROP TABLE IF EXISTS `individual_courses`;
 DROP TABLE IF EXISTS `images`;
-DROP TABLE IF EXISTS `advertisements`;
 DROP TABLE IF EXISTS `shops`;
 DROP TABLE IF EXISTS `follows`;
 DROP TABLE IF EXISTS `user_tags`;
-DROP TABLE IF EXISTS `subscribes`;
+DROP TABLE IF EXISTS `tags`;
 DROP TABLE IF EXISTS `notifications`;
 DROP TABLE IF EXISTS `users`;
-DROP TABLE IF EXISTS `notices`;
-
-CREATE TABLE `notices` (
-                           `id` integer AUTO_INCREMENT,
-                           `title` varchar(30),
-                           `content` varchar(200),
-                           `is_edit` boolean,
-                           `created_date` timestamp NOT NULL,
-                           `status` boolean NOT NULL,
-                           `read_cnt` integer,
-                           CONSTRAINT NOTICES_PK PRIMARY KEY (`id`)
-);
 
 CREATE TABLE `users` (
                          `id` integer AUTO_INCREMENT,
-                         `social_id` varchar(100) NOT NULL,
-                         `provider` enum('KAKAO', 'GOOGLE', 'APPLE') NOT NULL,
-                         `name` varchar(20) NOT NULL,
+                         `provider` enum('KAKAO', 'GOOGLE', 'APPLE', 'DEFAULT') NOT NULL,
+                         `serial_id` varchar(100) NOT NULL,
+                         `password` char(20) NOT NULL,
+                         `nickname` varchar(20) NOT NULL,
                          `introduction` varchar(300),
                          `role` enum('USER', 'ADMIN') NOT NULL,
                          `created_date` timestamp NOT NULL,
                          `is_login` boolean NOT NULL,
+                         `is_ios` boolean NOT NULL,
                          `refresh_token` varchar(300),
                          `device_token` varchar(300),
-                         `isIOS` boolean,
-                         `isPremium` boolean,
-                         `expiration_date` date,
                          CONSTRAINT USERS_PK PRIMARY KEY (`id`),
-                         CONSTRAINT USERS_CK UNIQUE(`social_id`, `provider`)
+                         CONSTRAINT USERS_CK UNIQUE(`provider`, `serial_id`)
 );
 
 CREATE TABLE `notifications` (
@@ -56,13 +42,20 @@ CREATE TABLE `notifications` (
                                  CONSTRAINT NOTIFICATIONS_FK FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 );
 
+CREATE TABLE `tags` (
+                        `id` integer AUTO_INCREMENT,
+                        `name` varchar(10) NOT NULL,
+                        CONSTRAINT TAGS_PK PRIMARY KEY (`id`)
+);
 
 CREATE TABLE `user_tags` (
                              `id` integer AUTO_INCREMENT,
                              `user_id` integer NOT NULL,
-                             `tag` varchar(100) NOT NULL,
+                             `tag_id` integer NOT NULL,
                              CONSTRAINT USER_TAGS_PK PRIMARY KEY (`id`),
-                             CONSTRAINT USER_TAGS_FK FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+                             CONSTRAINT USER_TAGS_CK UNIQUE(`user_id`, `tag_id`),
+                             CONSTRAINT USER_TAGS_USER_FK FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+                             CONSTRAINT USER_TAGS_TAG_FK FOREIGN KEY (`tag_id`) REFERENCES `tags` (`id`) ON DELETE CASCADE
 );
 
 CREATE TABLE `follows` (
@@ -85,27 +78,16 @@ CREATE TABLE `shops` (
                          CONSTRAINT SHOPS_PK PRIMARY KEY (`id`)
 );
 
-CREATE TABLE `advertisements` (
-                                  `id` integer AUTO_INCREMENT,
-                                  `enterprise_name` varchar(30) NOT NULL,
-                                  `enterprise_url` varchar(300) NOT NULL,
-
-                                  CONSTRAINT ADVERTISEMENTS_PK PRIMARY KEY (`id`)
-);
-
 CREATE TABLE `images` (
                           `id` integer AUTO_INCREMENT,
                           `use_user` integer,
                           `use_shop` integer,
-                          `use_advertisement` integer,
                           `origin_name` varchar(300) NOT NULL,
                           `uuid_name` varchar(300) NOT NULL,
-                          `path` varchar(255) NOT NULL,
                           `type` varchar(30) NOT NULL,
                           CONSTRAINT IMAGES_PK PRIMARY KEY (`id`),
                           CONSTRAINT IMAGES_USER_FK FOREIGN KEY (`use_user`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-                          CONSTRAINT IMAGES_SHOP_FK FOREIGN KEY (`use_shop`) REFERENCES `shops` (`id`) ON DELETE CASCADE,
-                          CONSTRAINT IMAGES_ADVERTISEMENT_FK FOREIGN KEY (`use_advertisement`) REFERENCES advertisements(`id`) ON DELETE CASCADE
+                          CONSTRAINT IMAGES_SHOP_FK FOREIGN KEY (`use_shop`) REFERENCES `shops` (`id`) ON DELETE CASCADE
 );
 
 CREATE TABLE `individual_courses` (
@@ -140,7 +122,7 @@ CREATE TABLE `using_courses` (
                                  `user_id` integer NOT NULL,
                                  `course_id` integer NOT NULL,
                                  `using_date` timestamp NOT NULL,
-                                 `finish_status` boolean NOT NULL,
+                                 `is_finished` boolean NOT NULL,
                                  CONSTRAINT USING_COURSES_PK PRIMARY KEY (`id`),
                                  CONSTRAINT USING_COURSES_USER_FK  FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
                                  CONSTRAINT USING_COURSES_COURSE_FK FOREIGN KEY (`course_id`) REFERENCES `enrollment_courses` (`id`)
@@ -149,10 +131,12 @@ CREATE TABLE `using_courses` (
 CREATE TABLE `course_tags` (
                                `id` integer AUTO_INCREMENT,
                                `course_id` integer NOT NULL,
-                               `tag` varchar(100) NOT NULL,
+                               `tag_id` integer NOT NULL,
 
-                               CONSTRAINT COURSE_TYPES_PK PRIMARY KEY (`id`),
-                               CONSTRAINT COURSE_TYPES_COURSE_FK FOREIGN KEY (`course_id`) REFERENCES `enrollment_courses` (`id`) ON DELETE CASCADE
+                               CONSTRAINT COURSE_TAGS_PK PRIMARY KEY (`id`),
+                               CONSTRAINT COURSE_TAGS_CK UNIQUE(`course_id`, `tag_id`),
+                               CONSTRAINT COURSE_TAGS_COURSE_FK FOREIGN KEY (`course_id`) REFERENCES `enrollment_courses` (`id`) ON DELETE CASCADE,
+                               CONSTRAINT COURSE_TAGS_TAG_FK FOREIGN KEY (`tag_id`) REFERENCES `tags` (`id`) ON DELETE CASCADE
 );
 
 CREATE TABLE `likes` (
@@ -197,9 +181,11 @@ CREATE TABLE `badges` (
                           CONSTRAINT BADGES_COURSE_FK FOREIGN KEY (`badge_id`) REFERENCES `badge_names` (`id`) ON DELETE CASCADE
 );
 
-INSERT INTO users (`social_id`, `provider`, `name`, `introduction`, `role`, `created_date`, `is_login`) VALUES ("00000000", 'KAKAO', "SUPER_ADMIM", "THIS IS ADIMN", 'ADMIN', now(), true);
-INSERT INTO images (`use_user`, `use_shop`, `use_advertisement`, `origin_name`, `uuid_name`, `type`, `path`)
-VALUES (1, null, null, "default_image.png", "0_default_image.png", "image/png", "//home//ossp-naemansan//images//0_default_image.png");
+INSERT INTO users (`provider`, `serial_id`, `password`, `nickname`, `introduction`, `role`, `created_date`, `is_login`, `is_ios`)
+VALUES ('DEFAULT', "00000000", "qwerasdf", "SUPER_ADMIM", "THIS IS ADIMN", 'ADMIN', now(), false, false);
+
+INSERT INTO images (`use_user`, `use_shop`, `use_advertisement`, `origin_name`, `uuid_name`, `type`)
+VALUES (1, null, null, "default_image.png", "0_default_image.png", "image/png");
 
 --
 INSERT INTO badge_names (`name`, `type`, `condition_num`) VALUES ("개인산책로 1회 등록!", 'INDIVIDUAL', 1);

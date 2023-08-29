@@ -1,16 +1,13 @@
 package com.dongguk.cse.naemansan.domain;
 
-import com.dongguk.cse.naemansan.domain.type.CourseTagType;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Getter
-@Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @Table(name="user_tags")
 public class UserTag {
     @Id
@@ -22,13 +19,20 @@ public class UserTag {
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    @Column(name = "tag", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private CourseTagType tag;
+    @JoinColumn(name = "tag_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Tag tag;
 
     @Builder
-    public UserTag(User user, CourseTagType tag) {
+    public UserTag(User user, Tag tag) {
         this.user = user;
         this.tag = tag;
+    }
+
+    public static UserTag of(User user, Tag tag) {
+        return UserTag.builder()
+                .user(user)
+                .tag(tag)
+                .build();
     }
 }

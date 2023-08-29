@@ -1,6 +1,6 @@
 package com.dongguk.cse.naemansan.dto.response;
 
-import com.dongguk.cse.naemansan.dto.CourseTagDto;
+import com.dongguk.cse.naemansan.dto.TagDto;
 import com.dongguk.cse.naemansan.dto.PointDto;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,7 +15,7 @@ public class EnrollmentCourseDetailDto {
     private String title;
     private Timestamp created_date;
     private String introduction;
-    private List<CourseTagDto> tags;
+    private List<TagDto> tags;
     private String start_location_name;
     private List<PointDto> locations;
     private Double distance;
@@ -24,7 +24,7 @@ public class EnrollmentCourseDetailDto {
 
     @Builder
     public EnrollmentCourseDetailDto(Long id, Long user_id, String user_name, String title, Timestamp created_date, String introduction,
-                                     List<CourseTagDto> tags, String start_location_name, List<PointDto> locations, Double distance,
+                                     List<TagDto> tags, String start_location_name, List<PointDto> locations, Double distance,
                                      Long like_cnt, Boolean is_like) {
         this.id = id;
         this.user_id = user_id;

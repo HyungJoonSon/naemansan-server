@@ -1,8 +1,9 @@
 package com.dongguk.cse.naemansan.repository;
 
 import com.dongguk.cse.naemansan.domain.EnrollmentCourse;
+import com.dongguk.cse.naemansan.domain.Tag;
 import com.dongguk.cse.naemansan.domain.User;
-import com.dongguk.cse.naemansan.domain.type.CourseTagType;
+import com.dongguk.cse.naemansan.domain.type.ECourseTag;
 import org.locationtech.jts.geom.Point;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,8 +30,8 @@ public interface EnrollmentCourseRepository extends JpaRepository<EnrollmentCour
     Page<EnrollmentCourse> findListByLikeAndUser(@Param("user") User user, Pageable pageable);
     @Query(value = "SELECT c FROM EnrollmentCourse c LEFT JOIN UsingCourse uc ON uc.enrollmentCourse = c WHERE uc.user = :user AND c.status = true")
     Page<EnrollmentCourse> findListByUsingAndUser(@Param("user") User user, Pageable pageable);
-    @Query(value = "SELECT c FROM EnrollmentCourse c LEFT JOIN CourseTag t ON t.enrollmentCourse = c WHERE t.courseTagType = :tag AND c.status = true")
-    Page<EnrollmentCourse> findListByTag(@Param("tag") CourseTagType courseTagType, Pageable paging);
+    @Query(value = "SELECT c FROM EnrollmentCourse c LEFT JOIN CourseTag t ON t.enrollmentCourse = c WHERE t.tag.name = :tag AND c.status = true")
+    Page<EnrollmentCourse> findListByTag(@Param("tag") String tag, Pageable paging);
 
     @Query(value = "SELECT c FROM EnrollmentCourse c WHERE c.status = true AND c.id IN :list")
     Page<EnrollmentCourse> findListByRecommend(@Param("list") Collection<Long> courseIds, Pageable pageable);
@@ -66,7 +67,6 @@ public interface EnrollmentCourseRepository extends JpaRepository<EnrollmentCour
         Long getId();
         Timestamp getCreateDate();
         Long getCnt();
-
     }
 }
 

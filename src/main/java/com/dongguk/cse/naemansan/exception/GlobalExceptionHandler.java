@@ -1,4 +1,4 @@
-package com.dongguk.cse.naemansan.common;
+package com.dongguk.cse.naemansan.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

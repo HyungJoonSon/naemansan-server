@@ -1,4 +1,4 @@
-package com.dongguk.cse.naemansan.common;
+package com.dongguk.cse.naemansan.exception;
 
 import io.micrometer.common.lang.Nullable;
 import lombok.AllArgsConstructor;
