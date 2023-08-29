@@ -13,7 +13,6 @@ import com.dongguk.cse.naemansan.dto.response.UserDto;
 import com.dongguk.cse.naemansan.dto.request.UserRequestDto;
 import com.dongguk.cse.naemansan.repository.*;
 import com.dongguk.cse.naemansan.util.CourseUtil;
-import com.dongguk.cse.naemansan.util.PaymentUtil;
 import com.siot.IamportRestClient.response.IamportResponse;
 import com.siot.IamportRestClient.response.Payment;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +36,6 @@ public class UserService {
     private final UserTagRepository userTagRepository;
     private final CommentRepository commentRepository;
     private final CourseUtil courseUtil;
-    private final PaymentUtil paymentUtil;
 
     public UserDto readUserProfile(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND_USER));
@@ -46,7 +44,6 @@ public class UserService {
         return UserDto.builder()
                 .user(user)
                 .image(user.getImage())
-                .is_premium(user.getIsPremium())
                 .comment_cnt(commentCnt)
                 .like_cnt((long) user.getLikes().size())
                 .badge_cnt((long) user.getBadges().size())
@@ -57,7 +54,7 @@ public class UserService {
     @Transactional
     public UserDto updateUserProfile(Long userId, UserRequestDto userRequestDto) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND_USER));
-        userRepository.findByIdNotAndName(userId, userRequestDto.getName()).ifPresent(u -> { throw new RestApiException(ErrorCode.DUPLICATION_NAME); });
+        userRepository.findByIdNotAndNickname(userId, userRequestDto.getName()).ifPresent(u -> { throw new RestApiException(ErrorCode.DUPLICATION_NAME); });
 
         if ((userRequestDto.getName() == null) || (userRequestDto.getName().length() == 0)) {
             throw new RestApiException(ErrorCode.NOT_EXIST_PARAMETER);
@@ -69,7 +66,6 @@ public class UserService {
         return UserDto.builder()
                 .user(user)
                 .image(user.getImage())
-                .is_premium(user.getIsPremium())
                 .comment_cnt(commentCnt)
                 .like_cnt((long) user.getLikes().size())
                 .badge_cnt((long) user.getBadges().size())
@@ -210,7 +206,7 @@ public class UserService {
 
         List<EnrollmentCourseListDto> enrollmentCourseListDtoList = new ArrayList<>();
         for (UsingCourse usingCourse : usingCourseList) {
-            if (!usingCourse.getFinishStatus()) {
+            if (!usingCourse.getIsFinished()) {
                 continue;
             }
             EnrollmentCourse enrollmentCourse = usingCourse.getEnrollmentCourse();
@@ -234,24 +230,6 @@ public class UserService {
         User user = userRepository.findById(userId).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND_USER));
 
         user.updateDevice(requestDto.getDevice_token(), requestDto.getIs_ios());
-        return Boolean.TRUE;
-    }
-
-    public Boolean updatePremium(Long userId, UserPaymentRequestDto requestDto) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND_USER));
-        IamportResponse<Payment> irsp = null;
-        try {
-            irsp = paymentUtil.paymentLookup(requestDto.getImp_uid());
-        } catch (Exception e) {
-            throw new RestApiException(ErrorCode.PAYMENT_FAIL);
-        }
-
-        if (!paymentUtil.verifyIamport(irsp, requestDto.getAmount())) {
-            throw new RestApiException(ErrorCode.PAYMENT_FAIL);
-        }
-
-        user.updatePremium(requestDto.getAmount() / 4900);
-
         return Boolean.TRUE;
     }
 }

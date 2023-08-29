@@ -66,7 +66,6 @@ public interface EnrollmentCourseRepository extends JpaRepository<EnrollmentCour
         Long getId();
         Timestamp getCreateDate();
         Long getCnt();
-
     }
 }
 

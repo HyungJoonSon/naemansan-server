@@ -80,32 +80,32 @@ public class AuthenticationService {
         }
 
         // User 탐색
-        Optional<User> user = userRepository.findBySocialIdAndLoginProviderType(socialId, loginProviderType);
+        Optional<User> user = userRepository.findBySerialIdAndLoginProviderType(socialId, loginProviderType);
         User loginUser = null;
 
         // 기존 유저가 아니라면 새로운 Data 저장, 기존 유저라면 Load
         if (user.isEmpty()) {
-            loginUser = userRepository.save(User.builder()
-                    .socialId(socialId)
-                    .name(userName)
-                    .loginProviderType(loginProviderType)
-                    .userRoleType(UserRoleType.USER)
-                    .build());
-            imageRepository.save(Image.builder()
-                    .useObject(loginUser)
-                    .imageUseType(ImageUseType.USER)
-                    .originName("default_image.png")
-                    .uuidName("0_default_image.png")
-                    .type("image/png")
-                    .path(FOLDER_PATH + "0_default_image.png").build());
+//            loginUser = userRepository.save(User.builder()
+//                    .socialId(socialId)
+//                    .name(userName)
+//                    .loginProviderType(loginProviderType)
+//                    .userRoleType(UserRoleType.USER)
+//                    .build());
+//            imageRepository.save(Image.builder()
+//                    .useObject(loginUser)
+//                    .imageUseType(ImageUseType.USER)
+//                    .originName("default_image.png")
+//                    .uuidName("0_default_image.png")
+//                    .type("image/png")
+//                    .path(FOLDER_PATH + "0_default_image.png").build());
         } else {
             loginUser = user.get();
         }
 
         // JwtToken 생성, 기존 Refresh Token 탐색
         JwtToken jwtToken = jwtProvider.createTotalToken(loginUser.getId(), loginUser.getUserRoleType());
-        loginUser.setRefreshToken(jwtToken.getRefresh_token());
-        loginUser.setIsLogin(true);
+//        loginUser.setRefreshToken(jwtToken.getRefresh_token());
+//        loginUser.setIsLogin(true);
 
         // Jwt 반환
         return JwtResponseDto.builder()

@@ -31,34 +31,4 @@ public class AdminController {
     public ResponseDto<?> deleteShopProfile(@PathVariable Long shopId) {
         return new ResponseDto<Boolean>(commonService.deleteShopProfile(shopId));
     }
-
-    @PostMapping("/enterprise")
-    public ResponseDto<?> createEnterpriseProfile(@RequestBody AdvertisementRequestDto requestDto) {
-        return new ResponseDto<Boolean>(commonService.createAdvertisementProfile(requestDto));
-    }
-
-    @PutMapping("/enterprise/{enterpriseId}")
-    public ResponseDto<?> updateEnterpriseProfile(@PathVariable Long enterpriseId, @RequestBody AdvertisementRequestDto requestDto) {
-        return new ResponseDto<AdvertisementDto>(commonService.updateAdvertisementProfile(enterpriseId, requestDto));
-    }
-
-    @DeleteMapping("/enterprise/{enterpriseId}")
-    public ResponseDto<?> deleteEnterpriseProfile(@PathVariable Long enterpriseId) {
-        return new ResponseDto<Boolean>(commonService.deleteAdvertisementProfile(enterpriseId));
-    }
-
-    @PostMapping("/notice")
-    public ResponseDto<?> createNotice(@RequestBody NoticeRequestDto requestDto) {
-        return new ResponseDto<Boolean>(commonService.createNotice(requestDto));
-    }
-
-    @PutMapping("/notice/{noticeId}")
-    public ResponseDto<?> updateNotice(@PathVariable Long noticeId, @RequestBody NoticeRequestDto requestDto) {
-        return new ResponseDto<NoticeDetailDto>(commonService.updateNotice(noticeId, requestDto));
-    }
-
-    @DeleteMapping("/notice/{noticeId}")
-    public ResponseDto<?> deleteNotice(@PathVariable Long noticeId) {
-        return new ResponseDto<Boolean>(commonService.deleteNotice(noticeId));
-    }
 }

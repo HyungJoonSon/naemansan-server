@@ -59,7 +59,7 @@ public class FollowService {
         for (Follow follow : follows) {
             followDtoList.add(FollowDto.builder()
                     .user_id(follow.getFollowerUser().getId())
-                    .user_name(follow.getFollowerUser().getName()).build());
+                    .user_name(follow.getFollowerUser().getNickname()).build());
         }
 
         // Dto 반환
@@ -78,7 +78,7 @@ public class FollowService {
         for (Follow follow : follows) {
             followDtoList.add(FollowDto.builder()
                     .user_id(follow.getFollowingUser().getId())
-                    .user_name(follow.getFollowingUser().getName()).build());
+                    .user_name(follow.getFollowingUser().getNickname()).build());
         }
 
         // Dto 반환

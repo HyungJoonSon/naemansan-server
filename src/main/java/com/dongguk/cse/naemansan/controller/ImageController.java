@@ -54,12 +54,4 @@ public class ImageController {
         map.put("uuid_name", imageService.uploadImage(shopId, ImageUseType.SHOP, file));
         return new ResponseDto(map);
     }
-
-    @PostMapping("/admin/image/enterprise/{advertisementId}")
-    public ResponseDto<?> uploadAdvertisementImage(@PathVariable Long advertisementId, @RequestParam("image")MultipartFile file) throws IOException {
-        Map<String, String> map = new HashMap<>();
-        map.put("uuid_name", imageService.uploadImage(advertisementId, ImageUseType.ADVERTISEMENT, file));
-        return new ResponseDto(map);
-    }
-
 }

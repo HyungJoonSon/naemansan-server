@@ -113,7 +113,7 @@ public class CourseService {
         usingCourseRepository.save(UsingCourse.builder()
                 .user(user)
                 .enrollmentCourse(enrollmentCourse)
-                .finishStatus(finishState).build());
+                .isFinished(finishState).build());
 
         return Boolean.TRUE;
     }
@@ -157,7 +157,7 @@ public class CourseService {
         return EnrollmentCourseDetailDto.builder()
                 .id(enrollmentCourse.getId())
                 .user_id(enrollmentCourse.getUser().getId())
-                .user_name(enrollmentCourse.getUser().getName())
+                .user_name(enrollmentCourse.getUser().getNickname())
                 .title(enrollmentCourse.getTitle())
                 .created_date(enrollmentCourse.getCreatedDate())
                 .introduction(enrollmentCourse.getIntroduction())
@@ -181,7 +181,7 @@ public class CourseService {
         return EnrollmentCourseDetailDto.builder()
                 .id(enrollmentCourse.getId())
                 .user_id(enrollmentCourse.getUser().getId())
-                .user_name(enrollmentCourse.getUser().getName())
+                .user_name(enrollmentCourse.getUser().getNickname())
                 .title(enrollmentCourse.getTitle())
                 .created_date(enrollmentCourse.getCreatedDate())
                 .introduction(enrollmentCourse.getIntroduction())
@@ -239,7 +239,7 @@ public class CourseService {
         return EnrollmentCourseDetailDto.builder()
                 .id(enrollmentCourse.getId())
                 .user_id(enrollmentCourse.getUser().getId())
-                .user_name(enrollmentCourse.getUser().getName())
+                .user_name(enrollmentCourse.getUser().getNickname())
                 .title(enrollmentCourse.getTitle())
                 .created_date(enrollmentCourse.getCreatedDate())
                 .introduction(enrollmentCourse.getIntroduction())

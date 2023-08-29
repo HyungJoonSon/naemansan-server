@@ -2,15 +2,11 @@ package com.dongguk.cse.naemansan.service;
 
 import com.dongguk.cse.naemansan.common.ErrorCode;
 import com.dongguk.cse.naemansan.common.RestApiException;
-import com.dongguk.cse.naemansan.domain.Advertisement;
 import com.dongguk.cse.naemansan.domain.Image;
-import com.dongguk.cse.naemansan.domain.Notice;
 import com.dongguk.cse.naemansan.domain.Shop;
 import com.dongguk.cse.naemansan.domain.type.ImageUseType;
-import com.dongguk.cse.naemansan.dto.request.AdvertisementRequestDto;
 import com.dongguk.cse.naemansan.dto.request.NoticeRequestDto;
 import com.dongguk.cse.naemansan.dto.request.ShopRequestDto;
-import com.dongguk.cse.naemansan.dto.response.AdvertisementDto;
 import com.dongguk.cse.naemansan.dto.response.NoticeDetailDto;
 import com.dongguk.cse.naemansan.dto.response.NoticeListDto;
 import com.dongguk.cse.naemansan.dto.response.ShopDto;
@@ -35,8 +31,6 @@ import java.util.List;
 @Transactional
 public class CommonService {
     private final ShopRepository shopRepository;
-    private final AdvertisementRepository advertisementRepository;
-    private final NoticeRepository noticeRepository;
     private final ImageRepository imageRepository;
     private final CourseUtil courseUtil;
 
@@ -56,8 +50,7 @@ public class CommonService {
                 .imageUseType(ImageUseType.SHOP)
                 .originName("default_image.png")
                 .uuidName("0_default_image.png")
-                .type("image/png")
-                .path(FOLDER_PATH + "0_default_image.png").build());
+                .type("image/png").build());
 
         return Boolean.TRUE;
     }
@@ -101,59 +94,6 @@ public class CommonService {
         return Boolean.TRUE;
     }
 
-    public Boolean createAdvertisementProfile(AdvertisementRequestDto requestDto) {
-        advertisementRepository.findByEnterpriseName(requestDto.getName())
-                .ifPresent(ads -> { throw new RestApiException(ErrorCode.DUPLICATION_NAME); });
-
-        Advertisement advertisement = advertisementRepository.save(Advertisement.builder()
-                .enterpriseName(requestDto.getName())
-                .enterpriseUrl(requestDto.getUrl()).build());
-
-        imageRepository.save(Image.builder()
-                .useObject(advertisement)
-                .imageUseType(ImageUseType.ADVERTISEMENT)
-                .originName("default_image.png")
-                .uuidName("0_default_image.png")
-                .type("image/png")
-                .path(FOLDER_PATH + "0_default_image.png").build());
-
-        return Boolean.TRUE;
-    }
-
-    public AdvertisementDto readAdvertisementProfile(Long advertisementId) {
-        Advertisement advertisement = advertisementRepository.findById(advertisementId)
-                .orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND_ADVERTISEMENT));
-
-        return AdvertisementDto.builder()
-                .id(advertisement.getId())
-                .name(advertisement.getEnterpriseName())
-                .url(advertisement.getEnterpriseUrl())
-                .image(advertisement.getImage()).build();
-    }
-
-    public AdvertisementDto updateAdvertisementProfile(Long advertisementId, AdvertisementRequestDto requestDto) {
-        Advertisement advertisement = advertisementRepository.findById(advertisementId)
-                .orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND_ADVERTISEMENT));
-
-        advertisement.setEnterpriseName(requestDto.getName());
-        advertisement.setEnterpriseUrl(requestDto.getUrl());
-
-        return AdvertisementDto.builder()
-                .id(advertisement.getId())
-                .name(advertisement.getEnterpriseName())
-                .url(advertisement.getEnterpriseUrl())
-                .image(advertisement.getImage()).build();
-    }
-
-    public Boolean deleteAdvertisementProfile(Long advertisementId) {
-        Advertisement advertisement = advertisementRepository.findById(advertisementId)
-                .orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND_ADVERTISEMENT));
-
-        advertisementRepository.delete(advertisement);
-
-        return Boolean.TRUE;
-    }
-
     public List<ShopDto> readShopList(Double latitude, Double longitude, Long pageNum, Long Num) {
         Pageable paging = PageRequest.of(pageNum.intValue(), Num.intValue(), Sort.by(Sort.Direction.ASC, "radius"));
         Page<ShopRepository.ShopLocationForm> page =  shopRepository.findListByLocation(courseUtil.getLatLng2Point(latitude, longitude), paging);
@@ -170,90 +110,6 @@ public class CommonService {
                     .location(courseUtil.getPoint2PointDto(shop.getShopLocation()))
                     .image(shop.getImage())
                     .radius(form.getRadius()).build());
-        }
-
-        return list;
-    }
-
-    public List<AdvertisementDto> readAdvertisementList() {
-        List<Advertisement> adsList = advertisementRepository.findAll();
-
-        List<AdvertisementDto> list = new ArrayList<>();
-        for (Advertisement ads : adsList) {
-            list.add(AdvertisementDto.builder()
-                    .id(ads.getId())
-                    .name(ads.getEnterpriseName())
-                    .url(ads.getEnterpriseUrl())
-                    .image(ads.getImage()).build());
-        }
-
-        return list;
-    }
-
-    public Boolean createNotice(NoticeRequestDto requestDto) {
-        noticeRepository.findByTitleAndStatus(requestDto.getTitle(), true)
-                .ifPresent(notice -> { throw new RestApiException(ErrorCode.DUPLICATION_TITLE); });
-
-        noticeRepository.save(Notice.builder()
-                        .title(requestDto.getTitle())
-                        .content(requestDto.getContent()).build());
-
-        return Boolean.TRUE;
-    }
-
-    public NoticeDetailDto readNotice(Long noticeId) {
-        Notice notice = noticeRepository.findByIdAndStatus(noticeId, true)
-                .orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND_NOTICE));
-
-        notice.incrementCnt();
-
-        return NoticeDetailDto.builder()
-                .id(notice.getId())
-                .title(notice.getTitle())
-                .content(notice.getContent())
-                .created_date(notice.getCreatedDate())
-                .read_cnt(notice.getReadCnt())
-                .is_edit(notice.getIsEdit()).build();
-    }
-
-    public NoticeDetailDto updateNotice(Long noticeId, NoticeRequestDto requestDto) {
-        Notice notice = noticeRepository.findByIdAndStatus(noticeId, true)
-                .orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND_NOTICE));
-        noticeRepository.findByIdNotAndTitleAndStatus(noticeId, requestDto.getTitle(), true)
-                .ifPresent(c -> { throw new RestApiException(ErrorCode.DUPLICATION_TITLE);});
-
-        notice.setTitle(requestDto.getTitle());
-        notice.setContent(requestDto.getContent());
-
-        return NoticeDetailDto.builder()
-                .id(notice.getId())
-                .title(notice.getTitle())
-                .content(notice.getContent())
-                .created_date(notice.getCreatedDate())
-                .read_cnt(notice.getReadCnt())
-                .is_edit(notice.getIsEdit()).build();
-    }
-
-    public Boolean deleteNotice(Long noticeId) {
-        Notice notice = noticeRepository.findByIdAndStatus(noticeId, true)
-                .orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND_NOTICE));
-
-        notice.setStatus(false);
-
-        return Boolean.TRUE;
-    }
-
-    public List<NoticeListDto> readNoticeList(Long pageIndex, Long maxNum) {
-        Pageable paging = PageRequest.of(pageIndex.intValue(), maxNum.intValue(), Sort.by(Sort.Direction.DESC, "createdDate"));
-        Page<Notice> page = noticeRepository.findAllByStatus(true, paging);
-
-        List<NoticeListDto> list = new ArrayList<>();
-        for (Notice notice : page.getContent()) {
-            list.add(NoticeListDto.builder()
-                    .id(notice.getId())
-                    .title(notice.getTitle())
-                    .created_date(notice.getCreatedDate())
-                    .read_cnt(notice.getReadCnt()).build());
         }
 
         return list;
