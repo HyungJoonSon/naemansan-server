@@ -29,7 +29,7 @@ public interface EnrollmentCourseRepository extends JpaRepository<EnrollmentCour
     Page<EnrollmentCourse> findListByLikeAndUser(@Param("user") User user, Pageable pageable);
     @Query(value = "SELECT c FROM EnrollmentCourse c LEFT JOIN UsingCourse uc ON uc.enrollmentCourse = c WHERE uc.user = :user AND c.status = true")
     Page<EnrollmentCourse> findListByUsingAndUser(@Param("user") User user, Pageable pageable);
-    @Query(value = "SELECT c FROM EnrollmentCourse c LEFT JOIN CourseTag t ON t.enrollmentCourse = c WHERE t.courseTagType = :tag AND c.status = true")
+    @Query(value = "SELECT c FROM EnrollmentCourse c LEFT JOIN CourseTag t ON t.enrollmentCourse = c WHERE t.tag.name = :tag AND c.status = true")
     Page<EnrollmentCourse> findListByTag(@Param("tag") CourseTagType courseTagType, Pageable paging);
 
     @Query(value = "SELECT c FROM EnrollmentCourse c WHERE c.status = true AND c.id IN :list")

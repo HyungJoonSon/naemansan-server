@@ -26,13 +26,6 @@ public class NotificationController {
         notificationUtil.sendNotificationByTokenTest(requestDto.getTargetToken(), requestDto.getTitle(), requestDto.getBody());
     }
 
-    //안드로이드 버전2 테스트
-    @PostMapping("/andfcm2")
-    public void pushMessage(@RequestBody NotificationRequestDto requestDto) throws IOException {
-        System.out.println(requestDto.getTargetToken() + " / " + requestDto.getTitle() + " / " + requestDto.getBody());
-        notificationUtil.sendMessageToTest(requestDto.getTargetToken(), requestDto.getTitle(), requestDto.getBody());
-    }
-
     //ios 푸시알림 테스트
     @PostMapping("/api/iosfcm")
     public void pushIosMessage(@RequestBody String token) throws Exception {
