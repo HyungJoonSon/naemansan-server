@@ -1,5 +1,5 @@
 package com.dongguk.cse.naemansan.domain.type;
 
-public enum TagStatusType {
+public enum ETagStatus {
     NEW, DELETE, DEFAULT
 }

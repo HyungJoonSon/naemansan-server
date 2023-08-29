@@ -3,11 +3,12 @@ package com.dongguk.cse.naemansan.service;
 import com.dongguk.cse.naemansan.common.ErrorCode;
 import com.dongguk.cse.naemansan.common.RestApiException;
 import com.dongguk.cse.naemansan.domain.*;
-import com.dongguk.cse.naemansan.domain.type.CourseTagType;
+import com.dongguk.cse.naemansan.domain.type.ECourseTag;
+import com.dongguk.cse.naemansan.domain.type.ETagStatus;
 import com.dongguk.cse.naemansan.dto.request.IndividualCourseRequestDto;
 import com.dongguk.cse.naemansan.dto.response.*;
 import com.dongguk.cse.naemansan.dto.request.EnrollmentCourseRequestDto;
-import com.dongguk.cse.naemansan.dto.CourseTagDto;
+import com.dongguk.cse.naemansan.dto.TagDto;
 import com.dongguk.cse.naemansan.dto.PointDto;
 import com.dongguk.cse.naemansan.event.EnrollmentCourseBadgeEvent;
 import com.dongguk.cse.naemansan.event.IndividualCourseBadgeEvent;
@@ -27,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -34,6 +36,7 @@ import java.util.*;
 @Transactional
 public class CourseService {
     private final UserRepository userRepository;
+    private final TagRepository tagRepository;
     private final IndividualCourseRepository individualCourseRepository;
     private final EnrollmentCourseRepository enrollmentCourseRepository;
     private final UsingCourseRepository usingCourseRepository;
@@ -145,14 +148,15 @@ public class CourseService {
                 .locations(multiPoint)
                 .distance(distance).build());
 
+        List<Tag> tags = tagRepository.findTagsByIds(requestDto.getTags().stream()
+                .map(tagDto -> tagDto.getName().getId())
+                .collect(Collectors.toList()));
+
         // CourseTag 등록하는 과정(TagDto2Tag and saveAll)
-        List<CourseTag> courseTags = courseUtil.getTagDto2TagForEnrollmentCourse(enrollmentCourse, requestDto.getTags());
+        List<CourseTag> courseTags = courseUtil.getTag2CourseTag(enrollmentCourse, tags);
         courseTagRepository.saveAll(courseTags);
 
         publisher.publishEvent(new EnrollmentCourseBadgeEvent(userId));
-
-        // ResponseDto 를 위한 TagDto 생성
-        List<CourseTagDto> courseTagDtoList = courseUtil.getTag2TagDtoForCourse(courseTags);
 
         return EnrollmentCourseDetailDto.builder()
                 .id(enrollmentCourse.getId())
@@ -161,7 +165,7 @@ public class CourseService {
                 .title(enrollmentCourse.getTitle())
                 .created_date(enrollmentCourse.getCreatedDate())
                 .introduction(enrollmentCourse.getIntroduction())
-                .tags(courseTagDtoList)
+                .tags(courseUtil.getTag2TagDto(tags))
                 .start_location_name(enrollmentCourse.getStartLocationName())
                 .locations(courseUtil.getPoint2PointDto(enrollmentCourse.getLocations()))
                 .distance(enrollmentCourse.getDistance())
@@ -177,7 +181,11 @@ public class CourseService {
 
         // Point to PointDto, Tag to TagDto 변환
         List<PointDto> locations = courseUtil.getPoint2PointDto(enrollmentCourse.getLocations());
-        List<CourseTagDto> courseTagDtoList = courseUtil.getTag2TagDtoForCourse(enrollmentCourse.getCourseTags());
+
+        List<TagDto> tags = courseUtil.getTag2TagDto(enrollmentCourse.getCourseTags().stream()
+                .map(CourseTag::getTag)
+                .collect(Collectors.toList()));
+
         return EnrollmentCourseDetailDto.builder()
                 .id(enrollmentCourse.getId())
                 .user_id(enrollmentCourse.getUser().getId())
@@ -185,7 +193,7 @@ public class CourseService {
                 .title(enrollmentCourse.getTitle())
                 .created_date(enrollmentCourse.getCreatedDate())
                 .introduction(enrollmentCourse.getIntroduction())
-                .tags(courseTagDtoList)
+                .tags(tags)
                 .start_location_name(enrollmentCourse.getStartLocationName())
                 .locations(locations)
                 .distance(enrollmentCourse.getDistance())
@@ -217,21 +225,12 @@ public class CourseService {
         // Course Tag Data Update, 최적화 필요
         courseTagRepository.deleteAll(enrollmentCourse.getCourseTags());
 
-        List<CourseTag> courseTags = courseTagRepository.saveAll(courseUtil.getTagDto2TagForEnrollmentCourse(enrollmentCourse, requestDto.getTags()));
-//        List<CourseTag> courseTagList = new ArrayList<>();
-//        for (CourseTagDto courseTagDto : enrollmentCourseRequestDto.getTags()) {
-//            switch (courseTagDto.getStatus()) {
-//                case NEW -> {
-//                    courseTagList.add(courseTagRepository.save(CourseTag.builder()
-//                            .enrollmentCourse(enrollmentCourse)
-//                            .courseTagType(courseTagDto.getName()).build()));
-//                }
-//                case DELETE -> { courseTagRepository.deleteByEnrollmentCourseAndCourseTagType(enrollmentCourse, courseTagDto.getName()); }
-//                case DEFAULT -> { courseTagList.add(CourseTag.builder()
-//                        .enrollmentCourse(enrollmentCourse)
-//                        .courseTagType(courseTagDto.getName()).build()); }
-//            }
-//        }
+        List<Tag> tags = tagRepository.findTagsByIds(requestDto.getTags().stream()
+                .filter(tagDto -> tagDto.getStatus() != ETagStatus.DELETE)
+                .map(tagDto -> tagDto.getName().getId())
+                .collect(Collectors.toList()));
+
+        List<CourseTag> courseTags = courseTagRepository.saveAll(courseUtil.getTag2CourseTag(enrollmentCourse, tags));
 
         // ResponseDto 를 위한 PointDto 생성
         List<PointDto> locations = courseUtil.getPoint2PointDto(enrollmentCourse.getLocations());
@@ -243,7 +242,7 @@ public class CourseService {
                 .title(enrollmentCourse.getTitle())
                 .created_date(enrollmentCourse.getCreatedDate())
                 .introduction(enrollmentCourse.getIntroduction())
-                .tags(courseUtil.getTag2TagDtoForCourse(courseTags))
+                .tags(courseUtil.getTag2TagDto(tags))
                 .start_location_name(enrollmentCourse.getStartLocationName())
                 .locations(locations)
                 .distance(enrollmentCourse.getDistance())
@@ -323,13 +322,13 @@ public class CourseService {
     public List<EnrollmentCourseListDto> getEnrollmentCourseListByTag(Long userId, Long pageNum, Long Num, String tag) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND_USER));
         // Tag 존재유무 확인
-        CourseTagType courseTagType = CourseTagType.existType(tag);
-        if (courseTagType == null) {
+        ECourseTag courseTag = ECourseTag.existType(tag);
+        if (courseTag == null) {
             throw new RestApiException(ErrorCode.NOT_FOUND_COURSE_TAG);
         }
 
         Pageable paging = PageRequest.of(pageNum.intValue(), Num.intValue(), Sort.by(Sort.Direction.DESC, "createdDate"));
-        Page<EnrollmentCourse> page =  enrollmentCourseRepository.findListByTag(courseTagType, paging);
+        Page<EnrollmentCourse> page =  enrollmentCourseRepository.findListByTag(courseTag, paging);
 
         List<EnrollmentCourseListDto> list = courseUtil.getEnrollmentCourseList(user, page);
 
@@ -381,7 +380,9 @@ public class CourseService {
                     .id(enrollmentCourse.getId())
                     .title(enrollmentCourse.getTitle())
                     .created_date(enrollmentCourse.getCreatedDate())
-                    .tags(courseUtil.getTag2TagDtoForCourse(enrollmentCourse.getCourseTags()))
+                    .tags(courseUtil.getTag2TagDto(enrollmentCourse.getCourseTags().stream()
+                            .map(CourseTag::getTag)
+                            .collect(Collectors.toList())))
                     .start_location_name(enrollmentCourse.getStartLocationName())
                     .distance(enrollmentCourse.getDistance())
                     .like_cnt((long) enrollmentCourse.getLikes().size())
@@ -408,7 +409,9 @@ public class CourseService {
                     .id(enrollmentCourse.getId())
                     .title(enrollmentCourse.getTitle())
                     .created_date(enrollmentCourse.getCreatedDate())
-                    .tags(courseUtil.getTag2TagDtoForCourse(enrollmentCourse.getCourseTags()))
+                    .tags(courseUtil.getTag2TagDto(enrollmentCourse.getCourseTags().stream()
+                            .map(CourseTag::getTag)
+                            .collect(Collectors.toList())))
                     .start_location_name(enrollmentCourse.getStartLocationName())
                     .distance(enrollmentCourse.getDistance())
                     .like_cnt((long) enrollmentCourse.getLikes().size())
@@ -435,7 +438,9 @@ public class CourseService {
                     .id(enrollmentCourse.getId())
                     .title(enrollmentCourse.getTitle())
                     .created_date(enrollmentCourse.getCreatedDate())
-                    .tags(courseUtil.getTag2TagDtoForCourse(enrollmentCourse.getCourseTags()))
+                    .tags(courseUtil.getTag2TagDto(enrollmentCourse.getCourseTags().stream()
+                            .map(CourseTag::getTag)
+                            .collect(Collectors.toList())))
                     .start_location_name(enrollmentCourse.getStartLocationName())
                     .distance(enrollmentCourse.getDistance())
                     .like_cnt((long) enrollmentCourse.getLikes().size())
@@ -482,7 +487,7 @@ public class CourseService {
         return map;
     }
 
-    public List<CourseTagType> getTagList() {
-        return List.of(CourseTagType.values());
+    public List<ECourseTag> getTagList() {
+        return List.of(ECourseTag.values());
     }
 }

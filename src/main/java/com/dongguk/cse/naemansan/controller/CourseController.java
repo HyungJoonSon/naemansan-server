@@ -1,7 +1,6 @@
 package com.dongguk.cse.naemansan.controller;
 
-import com.dongguk.cse.naemansan.domain.CourseTag;
-import com.dongguk.cse.naemansan.domain.type.CourseTagType;
+import com.dongguk.cse.naemansan.domain.type.ECourseTag;
 import com.dongguk.cse.naemansan.dto.request.IndividualCourseRequestDto;
 import com.dongguk.cse.naemansan.dto.response.*;
 import com.dongguk.cse.naemansan.dto.request.EnrollmentCourseRequestDto;
@@ -151,6 +150,6 @@ public class CourseController {
 
     @GetMapping("/tags")
     public ResponseDto<?> getTagList() {
-        return new ResponseDto<List<CourseTagType>>(courseService.getTagList());
+        return new ResponseDto<List<ECourseTag>>(courseService.getTagList());
     }
 }

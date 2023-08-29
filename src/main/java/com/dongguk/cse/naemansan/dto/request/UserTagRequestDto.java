@@ -1,6 +1,6 @@
 package com.dongguk.cse.naemansan.dto.request;
 
-import com.dongguk.cse.naemansan.dto.CourseTagDto;
+import com.dongguk.cse.naemansan.dto.TagDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,5 +11,5 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserTagRequestDto {
-    List<CourseTagDto> tags;
+    List<TagDto> tags;
 }
