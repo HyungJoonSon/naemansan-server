@@ -91,4 +91,4 @@ jobs:
           docker stop naemansan-was
           docker rm naemansan-was
           docker image rm ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPONAME }}
-          docker run -d -v /root/resources:/app/resources --net naemansan-bridge --ip 172.20.0.3 -p 8080:8080 --name naemansan-was ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPONAME }}
+          docker run -d -v /root/naemansan/resources:/app/resources --net naemansan-bridge --ip 172.20.0.3 -p 8080:8080 --name naemansan-was ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPONAME }}
