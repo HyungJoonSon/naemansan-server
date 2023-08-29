@@ -26,19 +26,4 @@ public class CommonController {
                                           @RequestParam("page") Long page, @RequestParam("num") Long num) {
         return new ResponseDto<List<ShopDto>>(commonService.readShopList(latitude, longitude, page, num));
     }
-
-    @GetMapping("/enterprise")
-    public ResponseDto<?> readEnterpriseProfile() {
-        return new ResponseDto<List<AdvertisementDto>>(commonService.readAdvertisementList());
-    }
-
-    @GetMapping("/notice/{noticeId}")
-    public ResponseDto<?> readNoticeList(@PathVariable Long noticeId) {
-        return new ResponseDto<NoticeDetailDto>(commonService.readNotice(noticeId));
-    }
-
-    @GetMapping("/notice/list")
-    public ResponseDto<?> readNoticeList(@RequestParam("page") Long page, @RequestParam("num") Long num) {
-        return new ResponseDto<List<NoticeListDto>>(commonService.readNoticeList(page, num));
-    }
 }

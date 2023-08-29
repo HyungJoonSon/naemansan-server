@@ -90,9 +90,9 @@ public class NotificationService {
         String content = "오랜만에 산책 어떠신가요?";
 
         if (NotificationType == 1)   //댓글
-            content = fromUser.getName() + "님이 산책로" + course.getTitle() + "에 댓글을 작성하였습니다.";
+            content = fromUser.getNickname() + "님이 산책로" + course.getTitle() + "에 댓글을 작성하였습니다.";
         else if (NotificationType == 2)  //좋아요
-            content = fromUser.getName() + "님이 산책로" + course.getTitle() + "에 좋아요를 눌렀습니다.";
+            content = fromUser.getNickname() + "님이 산책로" + course.getTitle() + "에 좋아요를 눌렀습니다.";
 
 
         if (toUser.getIsIos()) { //ios 푸시알림
@@ -119,7 +119,7 @@ public class NotificationService {
         String content = "오랜만에 산책 어떠신가요?";
 
         if (NotificationType == 3)  //팔로우
-            content = fromUser.getName() + "님이 팔로우를 하였습니다";
+            content = fromUser.getNickname() + "님이 팔로우를 하였습니다";
 
         if (toUser.getIsIos()) { //ios 푸시알림
             fcmNotificationDto = FCMNotificationRequestDto.builder()

@@ -216,10 +216,10 @@ public class CourseUtil {
     public List<CourseTag> getTagDto2TagForEnrollmentCourse(EnrollmentCourse enrollmentCourse, List<CourseTagDto> dtoList) {
         List<CourseTag> tagList = new ArrayList<>();
 
-        for (CourseTagDto courseTagDto : dtoList) {
-            tagList.add(CourseTag.builder()
-                    .enrollmentCourse(enrollmentCourse).courseTagType(courseTagDto.getName()).build());
-        }
+//        for (CourseTagDto courseTagDto : dtoList) {
+//            tagList.add(CourseTag.builder()
+//                    .enrollmentCourse(enrollmentCourse).courseTagType(courseTagDto.getName()).build());
+//        }
 
         return tagList;
     }
@@ -227,11 +227,11 @@ public class CourseUtil {
     public List<UserTag> getTagDto2TagForUser(User user, List<CourseTagDto> dtoList) {
         List<UserTag> tagList = new ArrayList<>();
 
-        for (CourseTagDto tagDto : dtoList) {
-            tagList.add(UserTag.builder()
-                    .user(user)
-                    .tag(tagDto.getName()).build());
-        }
+//        for (CourseTagDto tagDto : dtoList) {
+//            tagList.add(UserTag.builder()
+//                    .user(user)
+//                    .tag(tagDto.getName()).build());
+//        }
 
         return tagList;
     }
@@ -239,11 +239,11 @@ public class CourseUtil {
     public List<CourseTagDto> getTag2TagDtoForCourse(List<CourseTag> tagList) {
         List<CourseTagDto> dtoList = new ArrayList<>();
 
-        for (CourseTag courseTag : tagList) {
-            dtoList.add(CourseTagDto.builder()
-                    .name(courseTag.getCourseTagType())
-                    .status(TagStatusType.DEFAULT).build());
-        }
+//        for (CourseTag courseTag : tagList) {
+//            dtoList.add(CourseTagDto.builder()
+//                    .name(courseTag.getCourseTagType())
+//                    .status(TagStatusType.DEFAULT).build());
+//        }
 
         return dtoList;
     }
@@ -251,11 +251,11 @@ public class CourseUtil {
     public List<CourseTagDto> getTag2TagDtoForUser(List<UserTag> tagList) {
         List<CourseTagDto> dtoList = new ArrayList<>();
 
-        for (UserTag tag : tagList) {
-            dtoList.add(CourseTagDto.builder()
-                    .name(tag.getTag())
-                    .status(TagStatusType.DEFAULT).build());
-        }
+//        for (UserTag tag : tagList) {
+//            dtoList.add(CourseTagDto.builder()
+//                    .name(tag.getTag())
+//                    .status(TagStatusType.DEFAULT).build());
+//        }
 
         return dtoList;
     }

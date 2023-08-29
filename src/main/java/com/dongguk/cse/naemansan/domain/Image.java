@@ -10,8 +10,7 @@ import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
 @Getter
-@Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @Table(name = "images")
 @DynamicUpdate
 public class Image {
@@ -28,10 +27,6 @@ public class Image {
     @OneToOne(fetch = FetchType.LAZY)
     private Shop shop;
 
-    @JoinColumn(name = "use_advertisement", nullable = true)
-    @OneToOne(fetch = FetchType.LAZY)
-    private Advertisement advertisement;
-
     @Column(name = "origin_name", nullable = false)
     private String originName;
 
@@ -41,38 +36,26 @@ public class Image {
     @Column(name = "type", nullable = false)
     private String type;
 
-    @Column(name = "path", nullable = false)
-    private String path;
-
     @Builder
-    public Image(Object useObject, ImageUseType imageUseType, String originName, String uuidName, String type, String path) {
+    public Image(Object useObject, ImageUseType imageUseType, String originName, String uuidName, String type) {
         switch (imageUseType) {
             case USER -> {
                 this.user = (User) useObject;
                 this.shop = null;
-                this.advertisement = null;
             }
             case SHOP -> {
                 this.shop = (Shop) useObject;
-                this.user = null;
-                this.advertisement = null;
-            }
-            case ADVERTISEMENT -> {
-                this.advertisement = (Advertisement) useObject;
-                this.shop = null;
                 this.user = null;
             }
         }
         this.originName = originName;
         this.uuidName = uuidName;
         this.type = type;
-        this.path = path;
     }
 
-    public void updateImage(String originName, String uuidName, String type, String path) {
-        setOriginName(originName);
-        setUuidName(uuidName);
-        setPath(type);
-        setType(path);
+    public void updateImage(String originName, String uuidName, String type) {
+        this.originName = originName;
+        this.uuidName = uuidName;
+        this.type = type;
     }
 }

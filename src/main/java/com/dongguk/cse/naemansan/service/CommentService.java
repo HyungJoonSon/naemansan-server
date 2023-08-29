@@ -68,7 +68,7 @@ public class CommentService {
                     .id(comment.getId())
                     .user_id(comment.getUser().getId())
                     .course_id(comment.getEnrollmentCourse().getId())
-                    .user_name(comment.getUser().getName())
+                    .user_name(comment.getUser().getNickname())
                     .content(comment.getContent())
                     .created_date(comment.getCreatedDate())
                     .is_edit(comment.getIsEdit()).build());

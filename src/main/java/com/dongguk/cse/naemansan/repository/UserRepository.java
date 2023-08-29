@@ -14,8 +14,8 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByIdNotAndName(Long userId, String name);
-    Optional<User> findBySocialIdAndLoginProviderType(String socialId, LoginProviderType loginProviderType);
+    Optional<User> findByIdNotAndNickname(Long userId, String nickname);
+    Optional<User> findBySerialIdAndLoginProviderType(String serialId, LoginProviderType loginProviderType);
 
     @Query("SELECT u.id, u.userRoleType FROM User u WHERE u.id = :userId")
     Optional<Object[]> findUserForAuthentication(@Param("userId") Long userId);
@@ -24,8 +24,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<UserLoginForm> findByIdAndRefreshToken(@Param("userId") Long userId, @Param("refreshToken") String refreshToken);
 
     Optional<User> findByIdAndIsLoginAndRefreshTokenIsNotNull(Long userId, Boolean isLogin);
-
-//    List<User> findBy
 
 
     public interface UserLoginForm {

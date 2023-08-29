@@ -17,7 +17,6 @@ import java.util.List;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
 @Table(name = "users")
 @DynamicUpdate
@@ -27,15 +26,18 @@ public class User {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "social_id")
-    private String socialId;
-
     @Column(name = "provider")
     @Enumerated(EnumType.STRING)
     private LoginProviderType loginProviderType;
 
-    @Column(name = "name", nullable = false)
-    private String name;
+    @Column(name = "serial_id")
+    private String serialId;
+
+    @Column(name = "nickname", nullable = false)
+    private String nickname;
+
+    @Column(name = "password", nullable = false)
+    private String password;
 
     @Column(name = "introduction")
     private String introduction;
@@ -50,20 +52,14 @@ public class User {
     @Column(name = "is_login", columnDefinition = "TINYINT(1)", nullable = false)
     private Boolean isLogin;
 
+    @Column(name = "is_ios", columnDefinition = "TINYINT(1)")
+    private Boolean isIos;
+
     @Column(name = "refresh_Token")
     private String refreshToken;
 
     @Column(name = "device_Token")
     private String deviceToken;
-
-    @Column(name = "isIOS", columnDefinition = "TINYINT(1)")
-    private Boolean isIos;
-
-    @Column(name = "isPremium", columnDefinition = "TINYINT(1)")
-    private Boolean isPremium;
-
-    @Column(name = "expiration_date")
-    private Timestamp expirationDate;
 
     // ------------------------------------------------------------
 
@@ -103,46 +99,38 @@ public class User {
     private List<Comment> comments = new ArrayList<>();
 
 
-    @Builder
-    public User(String socialId, LoginProviderType loginProviderType, String name, UserRoleType userRoleType,
-                String refreshToken) {
-        this.socialId = socialId;
-        this.loginProviderType = loginProviderType;
-        this.userRoleType = userRoleType;
-        this.name = name;
-        this.introduction = "안녕하세요!";
+    public User(LoginProviderType providerType, String serialId, String nickname, String password,
+                String introduction, UserRoleType role) {
+        this.loginProviderType = providerType;
+        this.serialId = serialId;
+        this.nickname = nickname;
+        this.password = password;
+        this.introduction = introduction;
+        this.userRoleType = role;
         this.createdDate = Timestamp.valueOf(LocalDateTime.now());
         this.isLogin = true;
-        this.refreshToken = refreshToken;
+        this.isIos = false;
+        this.refreshToken = null;
         this.deviceToken = null;
-        this.isIos = null;
-        this.isPremium = null;
-        this.expirationDate = null;
     }
 
-    public void updateUser(String name, String introduction) {
-        setName(name);
-        setIntroduction(introduction);
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public void updateUser(String nickname, String introduction) {
+        this.nickname = nickname;
+        this.introduction = introduction;
     }
 
     public void updateDevice(String deviceToken, Boolean isIos) {
-        setDeviceToken(deviceToken);
-        setIsIos(isIos);
+        this.deviceToken = deviceToken;
+        this.isIos = isIos;
     }
 
     public void logoutUser() {
-        setIsLogin(false);
-        setRefreshToken(null);
-        setDeviceToken(null);
-    }
-
-    public void updatePremium(Long monthCnt) {
-        if (monthCnt == 0) {
-            setIsPremium(null);
-            setExpirationDate(null);
-        } else {
-            setIsPremium(true);
-            setExpirationDate(Timestamp.valueOf(LocalDateTime.now().plusMonths(monthCnt)));
-        }
+        this.isLogin = false;
+        this.refreshToken = null;
+        this.deviceToken = null;
     }
 }
